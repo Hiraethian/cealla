@@ -298,12 +298,12 @@ input::placeholder,textarea::placeholder{color:#5f5b53}
         <p class="eyebrow">Shared file settings</p>
         <p class="hint" style="margin-bottom:14px">These two are written into <code>cealla-data.js</code> and override the <code>CONFIG</code> block inside each widget.</p>
         <div class="row">
-          <div class="f"><label for="setLinkBase">Link base</label>
-            <input id="setLinkBase" placeholder="/lore/">
-            <p class="hint">Prefix put in front of each entry's slug.</p></div>
+          <div class="f"><label for="setLinkBase">Environments page</label>
+            <input id="setLinkBase" placeholder="/environments">
+            <p class="hint">Path of the Squarespace page holding the environment index. The map's "Read the full entry" links go there, anchored to the entry &mdash; e.g. <code>/environments#jhess</code>.</p></div>
           <div class="f"><label for="setMapPage">Map page</label>
             <input id="setMapPage" placeholder="/testhex">
-            <p class="hint">Leave blank to hide the "view map" link on index entries.</p></div>
+            <p class="hint">Path of the page holding the hex map. "View on map" links go there, anchored to the entry's hex. Leave blank to hide those links.</p></div>
         </div>
       </div>
 
@@ -388,7 +388,7 @@ input::placeholder,textarea::placeholder{color:#5f5b53}
 
       <div class="group">
         <p class="eyebrow">Publish</p>
-        <p class="hint" style="margin-bottom:14px">If more than one person publishes to this file, load it before you edit. Publishing replaces the whole file, so an old draft will wipe out whatever the other person added.</p>
+        <p class="hint" style="margin-bottom:14px">Publishing replaces the whole file rather than merging into it. If you are on a different browser or machine than last time, load the live file before you edit.</p>
         <div class="row">
           <button class="btn ghost" id="btnTest">Test the connection</button>
           <button class="btn ghost" id="btnPull">Load the live file</button>
@@ -457,7 +457,7 @@ input::placeholder,textarea::placeholder{color:#5f5b53}
    Defaults — mirror the widget CONFIG blocks
    ============================================================ */
 var DEFAULTS = {
-  config: { linkBase: "/lore/", mapPage: "/testhex" },
+  config: { linkBase: "/environments", mapPage: "/testhex" },
   map: {
     baseImage: "https://static1.squarespace.com/static/673f340165a71b0fc817fb27/t/6a74aa281adc2239c6292295/1786030633171/Cealla+Map+HEX+%281%29.png",
     cols: 44, rows: 36, hexSize: 21, imgW: 4961, imgH: 3508
@@ -1534,9 +1534,10 @@ function pullFile(){
 }
 
 function netHint(){
-  return sandboxed
-    ? "Calls to GitHub are blocked in this chat window. Download the file and open it locally."
-    : "If this page is open as a file:// URL, run `python3 -m http.server` in its folder and open localhost:8000 instead.";
+  if(sandboxed) return "Calls to GitHub are blocked in this chat window. Open the hosted copy instead.";
+  if(location.protocol === "file:")
+    return "This page is open as a file:// URL, which browsers may block. Open the hosted copy at your github.io address, or serve this folder over http.";
+  return "Check the connection and the repository fields, then try again.";
 }
 
 function publish(){
@@ -1554,14 +1555,14 @@ function publish(){
       sha = f.json.sha;
       if(lastSha === null){
         if(!confirm("There is already a published file, and this session never loaded it.\n\n" +
-                    "Publishing replaces it entirely. If someone else has added entries, they will be lost.\n\n" +
+                    "Publishing replaces it entirely, so anything in the published version that is not in this draft will be lost.\n\n" +
                     "Load the live file first, or continue if you know this draft is current.")) {
           logPub("Stopped. Use \u201cLoad the live file\u201d first."); return null;
         }
       } else if(lastSha !== sha){
         if(!confirm("The file on GitHub has changed since you loaded it (" +
                     lastSha.slice(0,7) + " \u2192 " + sha.slice(0,7) + ").\n\n" +
-                    "Someone else has published. Continuing overwrites their work.\n\n" +
+                    "A newer version was published from somewhere else. Continuing overwrites it.\n\n" +
                     "Load the live file and redo your edits, or continue to overwrite.")) {
           logPub("Stopped. Remote is at " + sha.slice(0,7) + ", you started from " + lastSha.slice(0,7) + ".");
           return null;
@@ -1596,6 +1597,16 @@ function bindGh(id, key){
   el.value = gh[key] || "";
   el.addEventListener("input", function(){ gh[key] = el.value.trim(); paintUrls(); persist(); });
 }
+/* Served from https://<owner>.github.io/<repo>/... — the address already
+   names the repository, so fill it in rather than making people type it. */
+(function(){
+  var m = location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
+  if(!m) return;
+  if(!gh.owner) gh.owner = m[1];
+  var seg = location.pathname.split("/").filter(Boolean);
+  if(!gh.repo && seg.length > 1) gh.repo = seg[0];
+})();
+
 bindGh("ghOwner","owner"); bindGh("ghRepo","repo"); bindGh("ghBranch","branch");
 bindGh("ghPath","path"); bindGh("ghMsg","msg");
 
@@ -1609,7 +1620,9 @@ if(sandboxed){
   $("ghTokenNote").textContent = "Held in memory for this session only. Calls to GitHub are blocked inside this chat window — download the file and open it locally to publish.";
 } else {
   $("ghRememberRow").hidden = false;
-  $("ghTokenNote").textContent = "Held in memory for this session unless you tick the box. Never put this file anywhere public while a token is saved in it.";
+  $("ghTokenNote").textContent = /\.github\.io$/i.test(location.hostname)
+    ? "Held in memory unless you tick the box. Saved tokens are readable by every GitHub Pages site under this same github.io address, so only tick it if you control all of them. Reach this page from a bookmark, never a search result."
+    : "Held in memory for this session unless you tick the box. Never put this file anywhere public while a token is saved in it.";
   var saved = null;
   try{ saved = localStorage.getItem(TKEY); }catch(e){}
   if(saved){ ghToken = saved; $("ghToken").value = saved; $("ghRemember").checked = true; }
@@ -1640,7 +1653,7 @@ store.get(SKEY).then(function(raw){
     var d = JSON.parse(raw);
     if(d.map) S.map = Object.assign(S.map, d.map);
     if(d.gh){
-      gh = Object.assign(gh, d.gh);
+      Object.keys(d.gh).forEach(function(k){ if(d.gh[k]) gh[k] = d.gh[k]; });
       ["Owner:owner","Repo:repo","Branch:branch","Path:path","Msg:msg"].forEach(function(m){
         var s = m.split(":"); $("gh" + s[0]).value = gh[s[1]] || "";
       });
