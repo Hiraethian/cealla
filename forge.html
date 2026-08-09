@@ -533,7 +533,9 @@ var ENV_FIELDS = [
   { g:"Identity", fields:[
     { k:"name", label:"Name", type:"text", cls:"", req:true, ph:"Jhess" },
     { k:"slug", label:"Slug", type:"text", cls:"", ph:"jhess",
-      hint:"Appended to the link base to build the entry's URL." }
+      hint:"Appended to the link base to build the entry's URL." },
+    { k:"link", label:"Page link", type:"text", cls:"", ph:"/cities/jhess",
+      hint:"Optional. When set, the map popup and the index send readers here instead of the environment index. Meant for city gazetteer pages." }
   ]},
   { g:"Classification", fields:[
     { k:"kind", label:"Kind", type:"select", opts:KINDS, cls:"sm",
@@ -782,6 +784,7 @@ function entryBlock(o, kind){
   var L = [];
   var head = "name: " + q_(o.name || "Untitled");
   if(has(o,"slug")) head += ", slug: " + q_(o.slug);
+  if(kind === "env" && has(o,"link")) head += ", link: " + q_(o.link);
   L.push(head);
 
   if(kind === "env"){
@@ -837,7 +840,7 @@ function build(){
   out += "   Generated " + new Date().toISOString().slice(0,10) + " by the Cealla Data Forge.\n";
   out += "   ============================================================ */\n";
   out += "window.CEALLA_DATA = {\n\n";
-  out += "  linkBase: " + q_(S.config.linkBase || "/lore/") + ",\n";
+  out += "  linkBase: " + q_(S.config.linkBase || "/environments") + ",\n";
   out += "  mapPage: " + q_(S.config.mapPage == null ? "" : S.config.mapPage) + ",\n\n";
 
   out += "  entries: [\n";
@@ -895,6 +898,12 @@ function validate(){
       else cells[k] = e.name || "another entry";
     }
     if((e.px == null) !== (e.py == null)) add("warn", who, "Has one beacon coordinate but not the other; both are needed.");
+    if(e.link){
+      if(/\s/.test(e.link)) add("error", who, "Page link contains whitespace and will break as a URL.");
+      else if(!/^(\/|https?:\/\/)/.test(e.link)) add("warn", who, "Page link does not start with / \u2014 it will resolve relative to whatever page the reader is on.");
+    } else if(e.kind === "city"){
+      add("warn", who, "Is a city with no page link, so readers land on the environment index. Fine until its gazetteer page exists.");
+    }
     (e.adversaries||"").split(",").map(function(s){return s.trim();}).filter(Boolean).forEach(function(n){
       if(!advNames[n.toLowerCase()]) add("warn", who, 'Lists "' + n + '", which is not a defined adversary. Fine if deliberate — it is only display text.');
     });
