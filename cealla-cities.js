@@ -4,7 +4,7 @@
    Owned by the City Forge. The main Data Forge never touches
    this file, and this tool never touches cealla-data.js.
    If a page loads both files, load cealla-data.js FIRST.
-   Generated 2026-08-09 by the Cealla City Forge.
+   Generated 2026-08-13 by the Cealla City Forge.
    ============================================================ */
 window.CEALLA_DATA = window.CEALLA_DATA || {};
 window.CEALLA_DATA.cities = [
@@ -12,14 +12,14 @@ window.CEALLA_DATA.cities = [
       image: "https://images.squarespace-cdn.com/content/v1/673f340165a71b0fc817fb27/b8b81c6e-b5d6-45ef-872a-74a8c8ff108e/Page+4.png?format=2500w",
       w: 2500, h: 3233,
       districts: [
-        { name: "Arden Floating Market", slug: "arden-floating-market", link: "/cities/ardenfell/floating-market" },
-        { name: "Glasswork Hollow", slug: "glasswork-hollow", link: "/cities/ardenfell/glasswork-hollow" },
-        { name: "Harborfront", slug: "harborfront", link: "/cities/ardenfell/harborfront" },
-        { name: "Scholar's Enclave", slug: "scholars-enclave", link: "/cities/ardenfell/scholars-enclave" },
-        { name: "Greyhook", slug: "greyhook", link: "/cities/ardenfell/greyhook" },
-        { name: "Riverside Glen", slug: "riverside-glen", link: "/cities/ardenfell/riverside-glen" },
-        { name: "Castle Heights", slug: "castle-heights", link: "/cities/ardenfell/castle-heights" },
-        { name: "The Warrens", slug: "the-warrens", link: "/cities/ardenfell/warrens" }
+        { name: "Arden Floating Market", slug: "arden-floating-market", link: "/ardenfell-store/p/arden-floating-market-setting-guide" },
+        { name: "Glasswork Hollow", slug: "glasswork-hollow" },
+        { name: "Harborfront", slug: "harborfront" },
+        { name: "Scholar's Enclave", slug: "scholars-enclave" },
+        { name: "Greyhook", slug: "greyhook" },
+        { name: "Riverside Glen", slug: "riverside-glen" },
+        { name: "Castle Heights", slug: "castle-heights" },
+        { name: "The Warrens", slug: "the-warrens" }
       ],
       pois: [
         { name: "The Unending Auction", slug: "the-unending-auction",
