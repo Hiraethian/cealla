@@ -3,7 +3,7 @@
    Loaded by the hex map, the environment index, and the
    adversary index. Entries carrying col/row also become
    lit hexes on the map.
-   Generated 2026-08-09 by the Cealla Data Forge.
+   Generated 2026-08-13 by the Cealla Data Forge.
    ============================================================ */
 window.CEALLA_DATA = {
 
