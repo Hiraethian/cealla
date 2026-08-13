@@ -8,7 +8,7 @@
 window.CEALLA_DATA = {
 
   linkBase: "/environments",
-  mapPage: "/testhex",
+  mapPage: "/cities/ardenfell",
 
   entries: [
     { name: "Rhoc & A Hard Place", slug: "rhoc-a-hard-place",
