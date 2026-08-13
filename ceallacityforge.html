@@ -9,22 +9,6 @@
      Single-file authoring tool for city gazetteer data:
      cities, their districts (neighborhoods), and their locales.
 
-     Companion to the main Data Forge, deliberately separate:
-     this tool reads and writes ONLY cealla-cities.js. The main
-     Forge reads and writes ONLY cealla-data.js. Neither can
-     clobber the other's file.
-
-     Output file shape (augment pattern — safe to load alongside
-     cealla-data.js, but if a page loads both, load cealla-data.js
-     FIRST, because that file assigns CEALLA_DATA wholesale):
-
-       window.CEALLA_DATA = window.CEALLA_DATA || {};
-       window.CEALLA_DATA.cities = [ ... ];
-
-     The city map widget reads CEALLA_DATA.cities unchanged, so a
-     city page needs only:
-       <script src="https://.../cealla-cities.js"><\/script>
-
      Publishing: GitHub Contents API, fine-grained PAT limited to
      the one repo with Contents read/write. The token is sent only
      to api.github.com and is never written into the data file.
