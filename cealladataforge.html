@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cealla Data Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=IM+Fell+English:ital@0;1&family=Karla:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --slate:#0e0d0b; --slate-2:#171512; --slate-3:#221f1a; --rule:#37332b;
+  --rune:#d0453c; --rune-soft:#e56a5f; --rune-dim:#8f2f29;
+  --amber:#cbbfa8; --ink:#f2ecdf; --ink-dim:#9b968b;
+  --disp:"Oswald","Arial Narrow",Impact,sans-serif;
+  --disp2:"IM Fell English","Caslon Antique",Georgia,serif;
+  --body:"Karla","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:var(--body); color:var(--ink);
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.92 0 0 0 0 0.85 0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
+    linear-gradient(180deg,#171512,#0e0d0b);
+  background-attachment:fixed;
+  display:flex; flex-direction:column;
+}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--rune-soft); outline-offset:2px}
+
+/* ---------- header ---------- */
+.forge-head{
+  display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+  padding:12px 18px; background:var(--slate-2);
+  border-bottom:3px double var(--rule); position:sticky; top:0; z-index:40;
+}
+.brand{display:flex; align-items:baseline; gap:11px}
+.brand b{
+  font-family:var(--disp2); font-size:23px; font-weight:400;
+  letter-spacing:.08em; text-transform:uppercase;
+  text-shadow:2px 2px 0 rgba(208,69,60,.5);
+}
+.brand span{
+  font-family:var(--disp); font-size:9.5px; font-weight:500;
+  letter-spacing:.34em; text-transform:uppercase; color:var(--ink-dim);
+}
+.tabs{display:flex; gap:6px; flex-wrap:wrap}
+.tab{
+  background:var(--slate-3); color:var(--ink-dim); border:1px solid var(--rule);
+  border-radius:0; padding:7px 14px; cursor:pointer;
+  font-family:var(--disp); font-size:11px; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; transition:all .15s ease;
+}
+.tab:hover{color:var(--ink); border-color:var(--ink-dim)}
+.tab.is-on{background:var(--rune); color:var(--ink); border-color:#000; box-shadow:2px 2px 0 #000}
+.tab em{font-style:normal; opacity:.75; margin-left:5px}
+.head-right{margin-left:auto; display:flex; align-items:center; gap:14px}
+#saveNote{
+  font-family:var(--disp); font-size:9.5px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-dim); white-space:nowrap;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  background:var(--rune); color:var(--ink); border:1px solid #000; border-radius:0;
+  padding:9px 16px; cursor:pointer; box-shadow:3px 3px 0 #000;
+  font-family:var(--disp); font-size:11px; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase;
+  transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover{background:var(--rune-soft); transform:translate(-1px,-1px); box-shadow:4px 4px 0 #000}
+.btn.ghost{
+  background:none; color:var(--ink-dim); border:1px dashed var(--ink-dim); box-shadow:none;
+}
+.btn.ghost:hover{background:none; color:var(--ink); border-color:var(--rune); transform:none}
+.btn.danger{background:none; color:var(--rune-soft); border:1px solid var(--rune-dim); box-shadow:none}
+.btn.danger:hover{background:var(--rune-dim); color:var(--ink); transform:none}
+.btn.sm{padding:6px 11px; font-size:10px; letter-spacing:.16em; box-shadow:2px 2px 0 #000}
+.btn.sm.ghost,.btn.sm.danger{box-shadow:none}
+
+/* ---------- layout ---------- */
+main{flex:1; min-height:0; display:flex}
+.pane{display:none; flex:1; min-height:0; width:100%}
+.pane.is-on{display:flex}
+.pane.solo{display:none; flex-direction:column; overflow:auto; padding:26px 22px 60px}
+.pane.solo.is-on{display:flex}
+.wrap{width:100%; max-width:900px; margin:0 auto}
+
+/* ---------- list column ---------- */
+.list-pane{
+  width:302px; flex:none; border-right:1px solid var(--rule);
+  background:rgba(23,21,18,.6); display:flex; flex-direction:column; min-height:0;
+}
+.list-head{padding:14px 14px 12px; border-bottom:1px solid var(--rule)}
+.list-actions{display:flex; gap:6px; margin-top:10px}
+.list-scroll{overflow-y:auto; flex:1; min-height:0; padding:8px 8px 30px}
+.hit{
+  display:block; width:100%; text-align:left; cursor:pointer;
+  background:none; border:0; border-left:3px solid transparent; border-radius:0;
+  padding:9px 10px; color:var(--ink); font-family:var(--body); font-size:14px;
+  transition:background .14s ease;
+}
+.hit:hover{background:var(--slate-3); border-left-color:var(--ink-dim)}
+.hit.is-on{background:var(--slate-3); border-left-color:var(--rune)}
+.hit b{font-family:var(--disp2); font-weight:400; font-size:15.5px; letter-spacing:.02em}
+.hit u{
+  display:block; text-decoration:none; margin-top:4px;
+  font-family:var(--disp); font-size:9px; font-weight:500;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--ink-dim);
+}
+.hit u i{font-style:normal; color:var(--rune-soft)}
+.empty{
+  padding:30px 14px; color:var(--ink-dim); font-size:13px;
+  font-style:italic; line-height:1.6;
+}
+
+/* ---------- editor column ---------- */
+.edit-pane{flex:1; min-width:0; overflow-y:auto; padding:22px 26px 70px}
+.edit-inner{max-width:760px}
+.group{margin-top:26px}
+.group:first-child{margin-top:0}
+.eyebrow{
+  font-family:var(--disp); font-size:10px; font-weight:600;
+  letter-spacing:.3em; text-transform:uppercase; color:var(--ink-dim);
+  margin:0 0 12px; padding-bottom:7px; border-bottom:1px solid var(--rule);
+}
+.row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px}
+.f{display:flex; flex-direction:column; gap:5px; flex:1 1 190px; min-width:0}
+.f.wide{flex-basis:100%}
+.f.sm{flex:0 1 120px}
+label{
+  font-family:var(--disp); font-size:9.5px; font-weight:500;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--ink-dim);
+}
+input,textarea,select{
+  font-family:var(--body); font-size:14px; color:var(--ink);
+  background:#0b0a09; border:1px solid var(--rule); border-radius:0;
+  padding:9px 11px; width:100%; outline:none;
+}
+select{font-family:var(--disp); letter-spacing:.06em}
+textarea{resize:vertical; min-height:70px; line-height:1.55}
+input:focus,textarea:focus,select:focus{border-color:var(--rune); box-shadow:3px 3px 0 rgba(208,69,60,.35)}
+input::placeholder,textarea::placeholder{color:#5f5b53}
+.hint{font-size:11.5px; color:var(--ink-dim); line-height:1.5; margin:2px 0 0}
+.hint code{font-family:var(--mono); font-size:11px; color:var(--amber)}
+
+/* feature cards */
+.feat{
+  border:1px solid var(--rule); border-left:3px solid var(--rune-dim);
+  background:#14120f; padding:12px 13px; margin-bottom:10px;
+}
+.feat-head{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+.feat-head span{
+  font-family:var(--disp); font-size:9.5px; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--rune-soft); flex:1;
+}
+
+/* pickable name chips */
+.chips{display:flex; flex-wrap:wrap; gap:5px; margin-top:7px}
+.chip{
+  background:var(--slate-3); color:var(--ink-dim); border:1px solid var(--rule);
+  border-radius:0; padding:4px 9px; cursor:pointer;
+  font-family:var(--disp); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+}
+.chip:hover{color:var(--ink); border-color:var(--rune)}
+.chip.is-on{background:var(--rune); color:var(--ink); border-color:#000}
+
+/* ---------- export ---------- */
+.out{
+  font-family:var(--mono); font-size:12.5px; line-height:1.65; color:#e8e2d3;
+  background:#0b0a09; border:1px solid var(--rule); border-left:3px solid var(--rune);
+  padding:16px; white-space:pre; overflow:auto; max-height:52vh; margin-top:14px;
+}
+.issue{
+  display:flex; gap:11px; align-items:flex-start; padding:9px 12px;
+  border:1px solid var(--rule); border-left:3px solid var(--rune); margin-bottom:7px;
+  font-size:13px; background:#14120f;
+}
+.issue.warn{border-left-color:var(--amber)}
+.issue b{
+  font-family:var(--disp); font-size:9.5px; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--rune-soft); flex:none; padding-top:2px; width:62px;
+}
+.issue.warn b{color:var(--amber)}
+.issue .who{color:var(--ink); font-weight:500}
+.issue .who{color:var(--ink); font-weight:500}
+.ok{
+  padding:14px; border:1px dashed var(--ink-dim); color:var(--ink-dim);
+  font-family:var(--disp); font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+}
+
+/* ---------- modal ---------- */
+.modal{
+  position:fixed; inset:0; z-index:90; display:none;
+  background:rgba(8,7,6,.88); padding:22px;
+}
+.modal.is-on{display:flex; align-items:center; justify-content:center}
+.modal-box{
+  background:var(--slate-2); border:1px solid var(--rule);
+  box-shadow:8px 8px 0 rgba(0,0,0,.6);
+  width:min(1100px,100%); max-height:100%; display:flex; flex-direction:column;
+}
+.modal-head{
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  padding:13px 16px; border-bottom:1px solid var(--rule);
+}
+.modal-head h2{
+  margin:0; font-family:var(--disp2); font-weight:400; font-size:19px;
+  letter-spacing:.05em; text-transform:uppercase;
+  text-shadow:1.5px 1.5px 0 rgba(208,69,60,.5);
+}
+.modal-body{flex:1; min-height:0; display:flex; flex-direction:column; padding:14px 16px}
+#pickCanvas{
+  width:100%; flex:1; min-height:340px; background:#0b0a09;
+  border:1px solid var(--rule); cursor:crosshair; display:block;
+}
+.readout{
+  display:flex; gap:20px; flex-wrap:wrap; align-items:center; margin-top:12px;
+  font-family:var(--disp); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-dim);
+}
+.readout em{font-style:normal; color:var(--rune-soft); font-size:13px}
+.modes{display:flex; gap:0}
+.mode{
+  background:var(--slate-3); color:var(--ink-dim); border:1px solid var(--rule);
+  padding:7px 13px; cursor:pointer; border-radius:0;
+  font-family:var(--disp); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+}
+.mode+.mode{border-left:0}
+.mode.is-on{background:var(--rune); color:var(--ink); border-color:#000}
+
+@media (max-width:820px){
+  main{flex-direction:column}
+  .pane.is-on{flex-direction:column}
+  .list-pane{width:100%; border-right:0; border-bottom:1px solid var(--rule); max-height:38vh}
+  .edit-pane{padding:18px 16px 60px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important}
+  .btn:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="forge-head">
+  <div class="brand"><b>Cealla</b><span>Data Forge</span></div>
+  <nav class="tabs" id="tabs">
+    <button class="tab is-on" data-tab="env">Environments <em id="cEnv">0</em></button>
+    <button class="tab" data-tab="adv">Adversaries <em id="cAdv">0</em></button>
+    <button class="tab" data-tab="set">Settings</button>
+    <button class="tab" data-tab="pub">Publish</button>
+    <button class="tab" data-tab="out">Export</button>
+  </nav>
+  <div class="head-right">
+    <span id="saveNote"></span>
+    <button class="btn" id="btnDownload">Download cealla-data.js</button>
+  </div>
+</header>
+
+<main>
+  <!-- ENVIRONMENTS -->
+  <section class="pane is-on" id="pane-env">
+    <aside class="list-pane">
+      <div class="list-head">
+        <input type="search" id="envSearch" placeholder="Find an environment" aria-label="Find an environment">
+        <div class="list-actions">
+          <button class="btn sm" data-new="env">Add environment</button>
+          <button class="btn sm ghost" data-dup="env">Duplicate</button>
+        </div>
+      </div>
+      <div class="list-scroll" id="envList"></div>
+    </aside>
+    <div class="edit-pane"><div class="edit-inner" id="envForm"></div></div>
+  </section>
+
+  <!-- ADVERSARIES -->
+  <section class="pane" id="pane-adv">
+    <aside class="list-pane">
+      <div class="list-head">
+        <input type="search" id="advSearch" placeholder="Find an adversary" aria-label="Find an adversary">
+        <div class="list-actions">
+          <button class="btn sm" data-new="adv">Add adversary</button>
+          <button class="btn sm ghost" data-dup="adv">Duplicate</button>
+        </div>
+      </div>
+      <div class="list-scroll" id="advList"></div>
+    </aside>
+    <div class="edit-pane"><div class="edit-inner" id="advForm"></div></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="pane solo" id="pane-set">
+    <div class="wrap">
+      <div class="group">
+        <p class="eyebrow">Shared file settings</p>
+        <p class="hint" style="margin-bottom:14px">These two are written into <code>cealla-data.js</code> and override the <code>CONFIG</code> block inside each widget.</p>
+        <div class="row">
+          <div class="f"><label for="setLinkBase">Environments page</label>
+            <input id="setLinkBase" placeholder="/environments">
+            <p class="hint">Path of the Squarespace page holding the environment index. The map's "Read the full entry" links go there, anchored to the entry &mdash; e.g. <code>/environments#jhess</code>.</p></div>
+          <div class="f"><label for="setMapPage">Map page</label>
+            <input id="setMapPage" placeholder="/testhex">
+            <p class="hint">Path of the page holding the hex map. "View on map" links go there, anchored to the entry's hex. Leave blank to hide those links.</p></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <p class="eyebrow">Map geometry — this tool only</p>
+        <p class="hint" style="margin-bottom:14px">Match these to the <code>CONFIG</code> block in your hex map file so the placement picker lands on the right squares. They are <b>not</b> written into the data file.</p>
+        <div class="row">
+          <div class="f sm"><label for="setCols">Columns</label><input id="setCols" type="number"></div>
+          <div class="f sm"><label for="setRows">Rows</label><input id="setRows" type="number"></div>
+          <div class="f sm"><label for="setHexSize">Hex size</label><input id="setHexSize" type="number"></div>
+          <div class="f sm"><label for="setImgW">Image width</label><input id="setImgW" type="number"></div>
+          <div class="f sm"><label for="setImgH">Image height</label><input id="setImgH" type="number"></div>
+        </div>
+        <div class="row">
+          <div class="f wide"><label for="setBaseImage">Map image URL</label>
+            <input id="setBaseImage">
+            <p class="hint">The same URL as <code>CONFIG.baseImage</code>. If it fails to load, the picker still works — you just place hexes on an empty grid.</p></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <p class="eyebrow">Load an existing file</p>
+        <p class="hint" style="margin-bottom:14px">Paste the contents of a <code>cealla-data.js</code> file, or pick the file, to carry on editing it. This replaces everything currently loaded.</p>
+        <div class="row">
+          <div class="f wide">
+            <textarea id="importText" placeholder="window.CEALLA_DATA = { ... };" style="min-height:150px; font-family:var(--mono); font-size:12px"></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn" id="btnImport">Load from text</button>
+          <button class="btn ghost" id="btnImportFile">Choose a file</button>
+          <input type="file" id="fileInput" accept=".js,.json,.txt" hidden>
+        </div>
+        <p class="hint" id="importNote"></p>
+      </div>
+
+      <div class="group">
+        <p class="eyebrow">Danger</p>
+        <button class="btn danger" id="btnClear">Clear everything</button>
+        <p class="hint">Wipes all entries in this tool. Your published file is untouched until you upload a new one.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLISH -->
+  <section class="pane solo" id="pane-pub">
+    <div class="wrap">
+      <div class="group">
+        <p class="eyebrow">Repository</p>
+        <p class="hint" style="margin-bottom:14px">Where the file gets committed. The branch needs GitHub Pages turned on in the repository's settings, serving from the branch root.</p>
+        <div class="row">
+          <div class="f"><label for="ghOwner">Owner</label>
+            <input id="ghOwner" placeholder="your-github-handle" autocomplete="off"></div>
+          <div class="f"><label for="ghRepo">Repository</label>
+            <input id="ghRepo" placeholder="cealla" autocomplete="off"></div>
+          <div class="f sm"><label for="ghBranch">Branch</label>
+            <input id="ghBranch" placeholder="main" autocomplete="off"></div>
+        </div>
+        <div class="row">
+          <div class="f"><label for="ghPath">File path</label>
+            <input id="ghPath" placeholder="cealla-data.js" autocomplete="off"></div>
+          <div class="f"><label for="ghMsg">Commit message</label>
+            <input id="ghMsg" placeholder="Update Cealla data" autocomplete="off"></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <p class="eyebrow">Access token</p>
+        <p class="hint" style="margin-bottom:14px">Use a <b>fine-grained</b> personal access token limited to this one repository, with Repository permissions &rarr; Contents set to read and write. Nothing else. The token is sent only to <code>api.github.com</code>.</p>
+        <div class="row">
+          <div class="f wide"><label for="ghToken">Token</label>
+            <input id="ghToken" type="password" placeholder="github_pat_..." autocomplete="off" spellcheck="false"></div>
+        </div>
+        <div class="row" id="ghRememberRow" hidden>
+          <label class="hint" style="display:flex; align-items:center; gap:9px; cursor:pointer; letter-spacing:0; text-transform:none; font-size:12.5px">
+            <input type="checkbox" id="ghRemember" style="width:15px; height:15px; accent-color:var(--rune)">
+            Remember the token on this device
+          </label>
+        </div>
+        <p class="hint" id="ghTokenNote"></p>
+      </div>
+
+      <div class="group">
+        <p class="eyebrow">Publish</p>
+        <p class="hint" style="margin-bottom:14px">Publishing replaces the whole file rather than merging into it. If you are on a different browser or machine than last time, load the live file before you edit.</p>
+        <div class="row">
+          <button class="btn ghost" id="btnTest">Test the connection</button>
+          <button class="btn ghost" id="btnPull">Load the live file</button>
+          <button class="btn" id="btnPublish">Publish to GitHub</button>
+        </div>
+        <pre class="out" id="pubLog" style="max-height:230px; white-space:pre-wrap">Nothing sent yet.</pre>
+      </div>
+
+      <div class="group">
+        <p class="eyebrow">Script tag for the widgets</p>
+        <p class="hint" style="margin-bottom:14px">Paste this over the matching line in all three widget files. It only needs doing once.</p>
+        <pre class="out" id="pagesUrls"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPORT -->
+  <section class="pane solo" id="pane-out">
+    <div class="wrap">
+      <div class="group">
+        <p class="eyebrow">Checks</p>
+        <div id="issues"></div>
+      </div>
+      <div class="group">
+        <p class="eyebrow">cealla-data.js</p>
+        <div class="row">
+          <button class="btn" id="btnCopy">Copy to clipboard</button>
+          <button class="btn ghost" id="btnDownload2">Download the file</button>
+        </div>
+        <pre class="out" id="outCode"></pre>
+        <p class="hint" style="margin-top:12px">This is the manual route: save the file and commit it yourself. The Publish tab does the same thing in one click. Either way, the widget script tags need pointing at your GitHub Pages site once &mdash; the Publish tab prints the exact lines.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- HEX PICKER -->
+<div class="modal" id="pickModal" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2 id="pickTitle">Place on the map</h2>
+      <div class="modes">
+        <button class="mode is-on" data-mode="hex">Pick the hex</button>
+        <button class="mode" data-mode="pin">Pin the beacon</button>
+      </div>
+      <button class="btn sm ghost" id="pickReset">Reset view</button>
+      <button class="btn sm" id="pickDone" style="margin-left:auto">Done</button>
+    </div>
+    <div class="modal-body">
+      <canvas id="pickCanvas"></canvas>
+      <div class="readout">
+        <span id="pickMode">Click a hex to set its col and row.</span>
+        <span>Hex <em id="pickColRow">—</em></span>
+        <span>Beacon <em id="pickPx">—</em></span>
+        <span style="margin-left:auto">Scroll to zoom · drag to pan</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   Defaults — mirror the widget CONFIG blocks
+   ============================================================ */
+var DEFAULTS = {
+  config: { linkBase: "/environments", mapPage: "/testhex" },
+  map: {
+    baseImage: "https://static1.squarespace.com/static/673f340165a71b0fc817fb27/t/6a74aa281adc2239c6292295/1786030633171/Cealla+Map+HEX+%281%29.png",
+    cols: 44, rows: 36, hexSize: 21, imgW: 4961, imgH: 3508
+  }
+};
+
+var KINDS = [
+  ["", "— none —"], ["city","City"], ["town","Town"], ["settlement","Township"],
+  ["fangyskyll","Fangyskyll"], ["litri","Litri Station"], ["ruin","Ruin"],
+  ["wild","Wilderness"], ["sea","Open water"]
+];
+var ENV_TYPES = ["", "Event", "Exploration", "Social", "Traversal"];
+var ADV_TYPES = ["", "Bruiser", "Horde", "Leader", "Minion", "Ranged",
+                 "Skulk", "Social", "Solo", "Standard", "Support"];
+var TIERS = ["", "1", "2", "3", "4"];
+
+/* ============================================================
+   State
+   ============================================================ */
+var S = {
+  config: Object.assign({}, DEFAULTS.config),
+  map: Object.assign({}, DEFAULTS.map),
+  entries: [],
+  adversaries: [],
+  sel: { env: null, adv: null },
+  q: { env: "", adv: "" },
+  tab: "env"
+};
+var uid = 1;
+var gh;   /* defined in the publishing block below */
+function stamp(o){ if(!o._uid) o._uid = uid++; else if(o._uid >= uid) uid = o._uid + 1; return o; }
+function byUid(arr, u){ for(var i=0;i<arr.length;i++) if(arr[i]._uid===u) return arr[i]; return null; }
+function $(id){ return document.getElementById(id); }
+
+/* ============================================================
+   Storage — present in the Claude artifact viewer, absent when
+   you open this file from disk. Either way the exported .js is
+   the real save; this only survives a refresh.
+   ============================================================ */
+var store = {
+  ok: (typeof window.storage !== "undefined" && window.storage),
+  get: function(k){
+    if(!this.ok) return Promise.resolve(null);
+    return window.storage.get(k, false).then(function(r){ return r ? r.value : null; })
+      .catch(function(){ return null; });
+  },
+  set: function(k,v){
+    if(!this.ok) return Promise.resolve();
+    return window.storage.set(k, v, false).catch(function(){});
+  }
+};
+var SKEY = "cealla-forge-state";
+var saveTimer;
+function note(t){ $("saveNote").textContent = t; }
+function persist(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    if(!store.ok){ note("Export to save"); return; }
+    store.set(SKEY, JSON.stringify({
+      config: S.config, map: S.map, entries: S.entries,
+      adversaries: S.adversaries, gh: gh   /* token is never written here */
+    })).then(function(){
+      var d = new Date();
+      note("Draft kept " + String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0"));
+    });
+  }, 500);
+}
+
+/* ============================================================
+   Field descriptors
+   ============================================================ */
+var ENV_FIELDS = [
+  { g:"Identity", fields:[
+    { k:"name", label:"Name", type:"text", cls:"", req:true, ph:"Jhess" },
+    { k:"slug", label:"Slug", type:"text", cls:"", ph:"jhess",
+      hint:"Appended to the link base to build the entry's URL." },
+    { k:"link", label:"Page link", type:"text", cls:"", ph:"/cities/jhess",
+      hint:"Optional. When set, the map popup and the index send readers here instead of the environment index. Meant for city gazetteer pages." }
+  ]},
+  { g:"Classification", fields:[
+    { k:"kind", label:"Kind", type:"select", opts:KINDS, cls:"sm",
+      hint:"Sets the badge and whether a beacon pings on the map." },
+    { k:"tier", label:"Tier", type:"select", opts:TIERS, cls:"sm", num:true },
+    { k:"envType", label:"Environment type", type:"select", opts:ENV_TYPES, cls:"sm" }
+  ]},
+  { g:"Description", fields:[
+    { k:"flavor", label:"Flavor", type:"textarea", cls:"wide",
+      ph:"One line of scene-setting. Renders in italics.",
+      hint:"Inline <b>bold</b> is allowed anywhere in this tool — the widgets write these fields straight into the page." },
+    { k:"impulses", label:"Impulses", type:"text", cls:"wide", ph:"Swallow the careless, reward the patient" }
+  ]},
+  { g:"Stats", fields:[
+    { k:"difficulty", label:"Difficulty", type:"number", cls:"sm", num:true },
+    { k:"adversaries", label:"Potential adversaries", type:"text", cls:"",
+      ph:"Rust Hound, Ash Prophet", pick:"adv",
+      hint:"A plain list. Click a name below to add it." }
+  ]},
+  { g:"Map placement", fields:[
+    { k:"col", label:"Column", type:"number", cls:"sm", num:true },
+    { k:"row", label:"Row", type:"number", cls:"sm", num:true },
+    { k:"px", label:"Beacon X", type:"number", cls:"sm", num:true },
+    { k:"py", label:"Beacon Y", type:"number", cls:"sm", num:true },
+    { k:"__pick", label:"", type:"pick" }
+  ]}
+];
+
+var ADV_FIELDS = [
+  { g:"Identity", fields:[
+    { k:"name", label:"Name", type:"text", req:true, ph:"Rust Hound" },
+    { k:"slug", label:"Slug", type:"text", ph:"rust-hound" }
+  ]},
+  { g:"Classification", fields:[
+    { k:"tier", label:"Tier", type:"select", opts:TIERS, cls:"sm", num:true },
+    { k:"advType", label:"Adversary type", type:"select", opts:ADV_TYPES, cls:"sm" }
+  ]},
+  { g:"Description", fields:[
+    { k:"flavor", label:"Flavor", type:"textarea", cls:"wide",
+      ph:"One line describing what this thing looks like." },
+    { k:"motives", label:"Motives & tactics", type:"text", cls:"wide",
+      ph:"Encircle, harry the wounded, flee when outnumbered" }
+  ]},
+  { g:"Stats", fields:[
+    { k:"difficulty", label:"Difficulty", type:"number", cls:"sm", num:true },
+    { k:"thresholds", label:"Thresholds", type:"text", cls:"sm", ph:"8/15" },
+    { k:"hp", label:"HP", type:"number", cls:"sm", num:true },
+    { k:"stress", label:"Stress", type:"number", cls:"sm", num:true },
+    { k:"atk", label:"ATK", type:"text", cls:"sm", ph:"+2" }
+  ]},
+  { g:"Standard attack", fields:[
+    { k:"attack.name", label:"Weapon", type:"text", ph:"Rusted Blade" },
+    { k:"attack.range", label:"Range", type:"text", cls:"sm", ph:"Melee" },
+    { k:"attack.damage", label:"Damage", type:"text", cls:"sm", ph:"1d8+2 phy" }
+  ]},
+  { g:"Experience", fields:[
+    { k:"experience", label:"Experience", type:"text", cls:"wide", ph:"Scavenging +2" }
+  ]},
+  { g:"Known locations", fields:[
+    { k:"hexes", label:"Found at hexes", type:"text", cls:"wide", ph:"12.07, 20.13",
+      hint:"Comma-separated col.row pairs. The adversary index renders each one as a chip that opens that hex on the world map." },
+    { k:"__pickhexes", label:"", type:"pickhexes" }
+  ]}
+];
+
+/* nested get/set for "attack.name" */
+function getVal(o, k){
+  var p = k.split("."), v = o;
+  for(var i=0;i<p.length;i++){ if(v==null) return undefined; v = v[p[i]]; }
+  return v;
+}
+function setVal(o, k, val){
+  var p = k.split("."), t = o;
+  for(var i=0;i<p.length-1;i++){ if(typeof t[p[i]] !== "object" || t[p[i]]===null) t[p[i]] = {}; t = t[p[i]]; }
+  if(val === "" || val === null || (typeof val === "number" && isNaN(val))) delete t[p[p.length-1]];
+  else t[p[p.length-1]] = val;
+}
+
+/* ============================================================
+   Form rendering
+   ============================================================ */
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function slugify(s){
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+}
+
+function fieldHTML(f, obj, idp){
+  if(f.type === "pickhexes"){
+    return '<div class="f wide"><button class="btn sm ghost" data-act="pick-hexes">Pick hexes on the map</button>' +
+      '<p class="hint">Click hexes to toggle them on and off. The field above updates when you press Done.</p></div>';
+  }
+  if(f.type === "pick"){
+    return '<div class="f wide"><button class="btn sm ghost" data-act="pick">Open the map picker</button>' +
+      '<p class="hint">Column and row light the hex up. The beacon pair is optional — set it to move the ping onto the drawn symbol instead of the hex centre.</p></div>';
+  }
+  var v = getVal(obj, f.k);
+  if(v === undefined || v === null) v = "";
+  var id = idp + "-" + f.k.replace(".","_");
+  var out = '<div class="f ' + (f.cls||"") + '">';
+  out += '<label for="' + id + '">' + esc(f.label) + (f.req ? ' *' : '') + '</label>';
+  if(f.type === "select"){
+    out += '<select id="' + id + '" data-k="' + f.k + '"' + (f.num ? ' data-num="1"' : '') + '>';
+    (f.opts||[]).forEach(function(o){
+      var val = Array.isArray(o) ? o[0] : o, lab = Array.isArray(o) ? o[1] : (o || "— none —");
+      out += '<option value="' + esc(val) + '"' + (String(v) === String(val) ? ' selected' : '') + '>' + esc(lab) + '</option>';
+    });
+    out += '</select>';
+  } else if(f.type === "textarea"){
+    out += '<textarea id="' + id + '" data-k="' + f.k + '" placeholder="' + esc(f.ph||"") + '">' + esc(v) + '</textarea>';
+  } else {
+    out += '<input id="' + id + '" type="' + (f.type==="number" ? "number" : "text") + '" data-k="' + f.k + '"' +
+      (f.num ? ' data-num="1"' : '') + ' value="' + esc(v) + '" placeholder="' + esc(f.ph||"") + '">';
+  }
+  if(f.pick === "adv"){
+    out += '<div class="chips" data-picker="adv"></div>';
+  }
+  if(f.hint) out += '<p class="hint">' + f.hint + '</p>';
+  out += '</div>';
+  return out;
+}
+
+function featHTML(f, i){
+  f = f || {};
+  return '<div class="feat" data-fi="' + i + '">' +
+    '<div class="feat-head"><span>Feature ' + (i+1) + '</span>' +
+      '<button class="btn sm ghost" data-act="feat-up">Up</button>' +
+      '<button class="btn sm ghost" data-act="feat-down">Down</button>' +
+      '<button class="btn sm danger" data-act="feat-del">Remove</button></div>' +
+    '<div class="row">' +
+      '<div class="f"><label>Name</label><input data-fk="name" value="' + esc(f.name||"") + '" placeholder="Collapsing Gantry"></div>' +
+      '<div class="f sm"><label>Type</label><input data-fk="type" list="featTypes" value="' + esc(f.type||"") + '" placeholder="Action"></div>' +
+    '</div>' +
+    '<div class="row" style="margin-bottom:0"><div class="f wide"><label>Effect</label>' +
+      '<textarea data-fk="text" placeholder="What happens. Inline <b>bold</b> is allowed.">' + esc(f.text||"") + '</textarea></div></div>' +
+  '</div>';
+}
+
+function renderForm(which){
+  var arr = which === "env" ? S.entries : S.adversaries;
+  var defs = which === "env" ? ENV_FIELDS : ADV_FIELDS;
+  var host = $(which + "Form");
+  var obj = byUid(arr, S.sel[which]);
+
+  if(!obj){
+    host.innerHTML = '<p class="empty">Nothing selected.<br><br>' +
+      (arr.length ? 'Pick something from the list to edit it.'
+                  : 'Add ' + (which==="env" ? 'an environment' : 'an adversary') + ' to start the file.') + '</p>';
+    return;
+  }
+
+  var h = '';
+  defs.forEach(function(grp){
+    h += '<div class="group"><p class="eyebrow">' + esc(grp.g) + '</p><div class="row">';
+    grp.fields.forEach(function(f){ h += fieldHTML(f, obj, which); });
+    h += '</div></div>';
+  });
+
+  h += '<div class="group"><p class="eyebrow">Features</p><div id="' + which + 'Feats">';
+  (obj.features||[]).forEach(function(f,i){ h += featHTML(f,i); });
+  if(!(obj.features||[]).length) h += '<p class="hint" style="margin-bottom:12px">No features yet.</p>';
+  h += '</div><button class="btn sm" data-act="feat-add">Add feature</button></div>';
+
+  h += '<div class="group"><p class="eyebrow">Entry</p>' +
+       '<button class="btn danger" data-act="del">Delete this entry</button></div>';
+
+  host.innerHTML = h;
+  paintPickers(which, obj);
+}
+
+/* adversary-name chips under the environment's adversaries field */
+function paintPickers(which, obj){
+  var host = $(which + "Form");
+  var box = host.querySelector('[data-picker="adv"]');
+  if(!box) return;
+  if(!S.adversaries.length){
+    box.innerHTML = '<span class="hint">Define adversaries first and they show up here as one-click chips.</span>';
+    return;
+  }
+  var cur = (obj.adversaries||"").split(",").map(function(s){ return s.trim(); }).filter(Boolean);
+  box.innerHTML = S.adversaries.map(function(a){
+    var on = cur.indexOf(a.name) > -1;
+    return '<button class="chip' + (on ? ' is-on' : '') + '" data-add="' + esc(a.name) + '">' + esc(a.name||"Untitled") + '</button>';
+  }).join("");
+}
+
+/* ============================================================
+   Lists
+   ============================================================ */
+function renderList(which){
+  var arr = which === "env" ? S.entries : S.adversaries;
+  var q = S.q[which].toLowerCase();
+  var host = $(which + "List");
+  var pool = arr.filter(function(e){ return !q || String(e.name||"").toLowerCase().indexOf(q) > -1; });
+
+  if(!pool.length){
+    host.innerHTML = '<p class="empty">' + (arr.length
+      ? 'Nothing under that name.'
+      : (which==="env" ? 'No environments yet.' : 'No adversaries yet.')) + '</p>';
+    return;
+  }
+  host.innerHTML = pool.map(function(e){
+    var bits = [];
+    if(e.tier != null && e.tier !== "") bits.push("Tier " + e.tier);
+    var t = which === "env" ? e.envType : e.advType;
+    if(t) bits.push(t);
+    if(which === "env" && e.col != null && e.row != null){
+      bits.push('<i>' + String(e.col).padStart(2,"0") + "." + String(e.row).padStart(2,"0") + '</i>');
+    }
+    return '<button class="hit' + (e._uid === S.sel[which] ? ' is-on' : '') + '" data-uid="' + e._uid + '">' +
+      '<b>' + esc(e.name || "Untitled") + '</b>' +
+      '<u>' + (bits.join(" &middot; ") || "No details yet") + '</u></button>';
+  }).join("");
+}
+
+function refresh(which){
+  renderList(which); renderForm(which); counts(); persist();
+}
+function counts(){
+  $("cEnv").textContent = S.entries.length;
+  $("cAdv").textContent = S.adversaries.length;
+}
+
+/* ============================================================
+   Serialiser
+   ============================================================ */
+function q_(s){
+  return '"' + String(s).replace(/\\/g,"\\\\").replace(/"/g,'\\"')
+    .replace(/\r/g,"").replace(/\n/g,"\\n") + '"';
+}
+function lit(v){ return typeof v === "number" ? String(v) : q_(v); }
+function has(o,k){
+  var v = getVal(o,k);
+  return v !== undefined && v !== null && v !== "" && !(typeof v === "number" && isNaN(v));
+}
+function pair(o,k,name){ return (name||k.split(".").pop()) + ": " + lit(getVal(o,k)); }
+
+function featLines(o, indent){
+  var f = (o.features||[]).filter(function(x){ return x && (x.name || x.text); });
+  if(!f.length) return null;
+  var pad = " ".repeat(indent);
+  var inner = f.map(function(x){
+    var bits = [];
+    if(x.name) bits.push("name: " + q_(x.name));
+    if(x.type) bits.push("type: " + q_(x.type));
+    if(x.text) bits.push("text: " + q_(x.text));
+    return pad + "  { " + bits.join(", ") + " }";
+  }).join(",\n");
+  return pad + "features: [\n" + inner + "\n" + pad + "]";
+}
+
+function entryBlock(o, kind){
+  var L = [];
+  var head = "name: " + q_(o.name || "Untitled");
+  if(has(o,"slug")) head += ", slug: " + q_(o.slug);
+  if(kind === "env" && has(o,"link")) head += ", link: " + q_(o.link);
+  L.push(head);
+
+  if(kind === "env"){
+    var cls = [];
+    if(has(o,"kind")) cls.push(pair(o,"kind"));
+    if(has(o,"tier")) cls.push(pair(o,"tier"));
+    if(has(o,"envType")) cls.push(pair(o,"envType"));
+    if(cls.length) L.push(cls.join(", "));
+
+    var pos = [];
+    ["col","row","px","py"].forEach(function(k){ if(has(o,k)) pos.push(pair(o,k)); });
+    if(pos.length) L.push(pos.join(", "));
+
+    if(has(o,"flavor")) L.push(pair(o,"flavor"));
+    if(has(o,"impulses")) L.push(pair(o,"impulses"));
+    var st = [];
+    if(has(o,"difficulty")) st.push(pair(o,"difficulty"));
+    if(has(o,"adversaries")) st.push(pair(o,"adversaries"));
+    if(st.length) L.push(st.join(", "));
+  } else {
+    var c2 = [];
+    if(has(o,"tier")) c2.push(pair(o,"tier"));
+    if(has(o,"advType")) c2.push(pair(o,"advType"));
+    if(c2.length) L.push(c2.join(", "));
+
+    if(has(o,"flavor")) L.push(pair(o,"flavor"));
+    if(has(o,"motives")) L.push(pair(o,"motives"));
+
+    var s2 = [];
+    ["difficulty","thresholds","hp","stress","atk"].forEach(function(k){ if(has(o,k)) s2.push(pair(o,k)); });
+    if(s2.length) L.push(s2.join(", "));
+
+    var atk = [];
+    ["attack.name","attack.range","attack.damage"].forEach(function(k){ if(has(o,k)) atk.push(pair(o,k)); });
+    if(atk.length) L.push("attack: { " + atk.join(", ") + " }");
+
+    if(has(o,"experience")) L.push(pair(o,"experience"));
+    if(has(o,"hexes")) L.push(pair(o,"hexes"));
+  }
+
+  var f = featLines(o, 6);
+  if(f) L.push(f.replace(/^ {6}/,""));
+
+  return "    { " + L.join(",\n      ") + " }";
+}
+
+function build(){
+  var out = "";
+  out += "/* ============================================================\n";
+  out += "   cealla-data.js — shared content for the Cealla widgets.\n";
+  out += "   Loaded by the hex map, the environment index, and the\n";
+  out += "   adversary index. Entries carrying col/row also become\n";
+  out += "   lit hexes on the map.\n";
+  out += "   Generated " + new Date().toISOString().slice(0,10) + " by the Cealla Data Forge.\n";
+  out += "   ============================================================ */\n";
+  out += "window.CEALLA_DATA = {\n\n";
+  out += "  linkBase: " + q_(S.config.linkBase || "/environments") + ",\n";
+  out += "  mapPage: " + q_(S.config.mapPage == null ? "" : S.config.mapPage) + ",\n\n";
+
+  out += "  entries: [\n";
+  out += S.entries.map(function(e){ return entryBlock(e,"env"); }).join(",\n\n");
+  out += (S.entries.length ? "\n" : "") + "  ],\n\n";
+
+  out += "  adversaries: [\n";
+  out += S.adversaries.map(function(e){ return entryBlock(e,"adv"); }).join(",\n\n");
+  out += (S.adversaries.length ? "\n" : "") + "  ]\n";
+
+  out += "};\n";
+  return out;
+}
+
+/* ============================================================
+   Validation
+   ============================================================ */
+function validate(){
+  var out = [];
+  function add(sev, where, msg){ out.push({sev:sev, where:where, msg:msg}); }
+
+  var slugs = {}, cells = {}, advNames = {};
+  S.adversaries.forEach(function(a){ if(a.name) advNames[a.name.toLowerCase()] = true; });
+
+  [["Environment", S.entries], ["Adversary", S.adversaries]].forEach(function(pairArr){
+    var lab = pairArr[0], arr = pairArr[1];
+    arr.forEach(function(e){
+      var who = lab + ' "' + (e.name || "Untitled") + '"';
+      if(!e.name) add("error", lab, "An entry has no name. The widgets sort and search on it.");
+      if(e.slug){
+        var key = e.slug.toLowerCase();
+        if(slugs[key]) add("error", who, "Slug " + e.slug + " is already used by " + slugs[key] + ".");
+        else slugs[key] = e.name || "another entry";
+        if(!/^[a-z0-9-]+$/.test(e.slug)) add("warn", who, "Slug has characters that will need escaping in a URL.");
+      } else {
+        add("warn", who, "No slug, so no link to a full entry will render.");
+      }
+      (e.features||[]).forEach(function(f,i){
+        if(!f.name && f.text) add("warn", who, "Feature " + (i+1) + " has effect text but no name.");
+        if(f.name && !f.text) add("warn", who, 'Feature "' + f.name + '" has no effect text.');
+      });
+    });
+  });
+
+  S.entries.forEach(function(e){
+    var who = 'Environment "' + (e.name || "Untitled") + '"';
+    var hasCol = e.col != null && e.col !== "", hasRow = e.row != null && e.row !== "";
+    if(hasCol !== hasRow){
+      add("error", who, "Has a column or a row but not both, so it will be ignored by the map.");
+    } else if(hasCol){
+      if(e.col < 0 || e.col >= S.map.cols || e.row < 0 || e.row >= S.map.rows)
+        add("error", who, "Sits outside the " + S.map.cols + " x " + S.map.rows + " grid.");
+      var k = e.col + ":" + e.row;
+      if(cells[k]) add("error", who, "Shares hex " + k + " with " + cells[k] + ". The map keeps only one.");
+      else cells[k] = e.name || "another entry";
+    }
+    if((e.px == null) !== (e.py == null)) add("warn", who, "Has one beacon coordinate but not the other; both are needed.");
+    if(e.link){
+      if(/\s/.test(e.link)) add("error", who, "Page link contains whitespace and will break as a URL.");
+      else if(!/^(\/|https?:\/\/)/.test(e.link)) add("warn", who, "Page link does not start with / \u2014 it will resolve relative to whatever page the reader is on.");
+    } else if(e.kind === "city"){
+      add("warn", who, "Is a city with no page link, so readers land on the environment index. Fine until its gazetteer page exists.");
+    }
+    (e.adversaries||"").split(",").map(function(s){return s.trim();}).filter(Boolean).forEach(function(n){
+      if(!advNames[n.toLowerCase()]) add("warn", who, 'Lists "' + n + '", which is not a defined adversary. Fine if deliberate — it is only display text.');
+    });
+  });
+
+  S.adversaries.forEach(function(e){
+    if(!e.hexes) return;
+    var who = 'Adversary "' + (e.name || "Untitled") + '"';
+    String(e.hexes).split(",").forEach(function(s){
+      s = s.trim(); if(!s) return;
+      var m = /^(\d{1,3})\.(\d{1,3})$/.exec(s);
+      if(!m){ add("warn", who, 'Hex "' + s + '" is not in col.row form (e.g. 12.07), so its map link will not land anywhere.'); return; }
+      if(Number(m[1]) >= S.map.cols || Number(m[2]) >= S.map.rows)
+        add("error", who, "Hex " + s + " sits outside the " + S.map.cols + " x " + S.map.rows + " grid.");
+    });
+  });
+
+  if(!S.entries.length && !S.adversaries.length) add("warn", "File", "No entries at all. The widgets will fall back to their inline placeholders.");
+  return out;
+}
+
+function renderOut(){
+  $("outCode").textContent = build();
+  var iss = validate(), host = $("issues");
+  if(!iss.length){ host.innerHTML = '<div class="ok">All checks passed</div>'; return; }
+  host.innerHTML = iss.map(function(i){
+    return '<div class="issue ' + (i.sev==="warn"?"warn":"") + '"><b>' + (i.sev==="warn"?"Check":"Fix") + '</b>' +
+      '<span><strong class="who">' + esc(i.where) + '</strong> — ' + esc(i.msg) + '</span></div>';
+  }).join("");
+}
+
+/* ============================================================
+   Hex picker
+   ============================================================ */
+var pick = {
+  target: null, which: "env", mode: "hex", multi: false,
+  k: 1, panX: 0, panY: 0, img: null, imgOk: false,
+  hover: null, drag: null, moved: false
+};
+var SQ3 = Math.sqrt(3);
+function geo(){
+  var m = S.map, s = m.hexSize;
+  return {
+    s: s,
+    gw: s * SQ3 * (m.cols + 0.5),
+    gh: s * (1.5 * m.rows + 0.5),
+    x0: -s * SQ3 * 0.5,
+    y0: -s
+  };
+}
+function hexCenter(col,row){
+  var s = S.map.hexSize;
+  var q = col - ((row - (row & 1)) / 2), r = row;
+  return { x: s * SQ3 * (q + r/2), y: s * 1.5 * r };
+}
+/* "12.07, 20.13" <-> [{col,row}] for the multi-hex picker */
+function hexKey(col,row){
+  return String(col).padStart(2,"0") + "." + String(row).padStart(2,"0");
+}
+function parseHexes(str){
+  var out = [];
+  String(str == null ? "" : str).split(",").forEach(function(s){
+    var m = /^\s*(\d{1,3})\s*\.\s*(\d{1,3})\s*$/.exec(s);
+    if(m) out.push({ col: Number(m[1]), row: Number(m[2]) });
+  });
+  return out;
+}
+
+function openPicker(which, obj, multi){
+  pick.target = obj; pick.which = which; pick.multi = !!multi;
+  pick.mode = "hex"; pick.moved = false;
+  $("pickModal").classList.add("is-on");
+  /* the hex/beacon switch means nothing in multi mode; hide it */
+  var modes = document.querySelector(".modes");
+  if(modes) modes.style.display = pick.multi ? "none" : "";
+  document.querySelectorAll(".mode").forEach(function(b){
+    b.classList.toggle("is-on", b.getAttribute("data-mode") === "hex");
+  });
+  $("pickMode").textContent = pick.multi
+    ? "Click hexes to toggle where this adversary can be found."
+    : "Click a hex to set its col and row.";
+  if(!pick.img || pick.img.src !== S.map.baseImage){
+    pick.imgOk = false;
+    pick.img = new Image();
+    pick.img.onload = function(){ pick.imgOk = true; drawPick(); };
+    pick.img.onerror = function(){ pick.imgOk = false; drawPick(); };
+    pick.img.src = S.map.baseImage;
+  }
+  requestAnimationFrame(resetView);
+  readout();
+}
+function closePicker(){ $("pickModal").classList.remove("is-on"); }
+
+function sizeCanvas(){
+  var c = $("pickCanvas");
+  var r = c.getBoundingClientRect();
+  var dpr = window.devicePixelRatio || 1;
+  c.width = Math.max(1, Math.round(r.width * dpr));
+  c.height = Math.max(1, Math.round(r.height * dpr));
+  c._dpr = dpr; c._w = r.width; c._h = r.height;
+}
+function resetView(){
+  sizeCanvas();
+  var c = $("pickCanvas"), g = geo();
+  var k = Math.min(c._w / g.gw, c._h / g.gh);
+  pick.k = k;
+  pick.panX = (c._w - g.gw * k) / 2;
+  pick.panY = (c._h - g.gh * k) / 2;
+  drawPick();
+}
+function toScreen(wx, wy){
+  var g = geo();
+  return { x: (wx - g.x0) * pick.k + pick.panX, y: (wy - g.y0) * pick.k + pick.panY };
+}
+function toWorld(sx, sy){
+  var g = geo();
+  return { x: (sx - pick.panX) / pick.k + g.x0, y: (sy - pick.panY) / pick.k + g.y0 };
+}
+
+function drawPick(){
+  var c = $("pickCanvas");
+  if(!c.width) sizeCanvas();
+  var ctx = c.getContext("2d"), g = geo(), m = S.map, dpr = c._dpr || 1;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,c._w,c._h);
+  ctx.fillStyle = "#0b0a09"; ctx.fillRect(0,0,c._w,c._h);
+
+  ctx.save();
+  ctx.translate(pick.panX, pick.panY);
+  ctx.scale(pick.k, pick.k);
+
+  if(pick.imgOk){
+    ctx.drawImage(pick.img, 0, 0, g.gw, g.gh);
+  } else {
+    ctx.fillStyle = "#14120f"; ctx.fillRect(0,0,g.gw,g.gh);
+  }
+
+  /* which cells are taken, and by whom */
+  var taken = {};
+  S.entries.forEach(function(e){
+    if(e.col != null && e.row != null) taken[e.col + ":" + e.row] = e;
+  });
+  var t = pick.target;
+  var multiSel = null;
+  if(pick.multi && t){
+    multiSel = {};
+    parseHexes(t.hexes).forEach(function(x){ multiSel[x.col + ":" + x.row] = true; });
+  }
+
+  ctx.lineWidth = 1 / pick.k;
+  for(var row = 0; row < m.rows; row++){
+    for(var col = 0; col < m.cols; col++){
+      var ctr = hexCenter(col,row);
+      var cx = ctr.x - g.x0, cy = ctr.y - g.y0;
+      ctx.beginPath();
+      for(var i=0;i<6;i++){
+        var a = Math.PI/180 * (60*i - 30);
+        var px = cx + m.hexSize * Math.cos(a), py = cy + m.hexSize * Math.sin(a);
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath();
+      var key = col + ":" + row;
+      var occ = taken[key];
+      var isSelf = pick.multi
+        ? !!(multiSel && multiSel[key])
+        : (t && t.col === col && t.row === row);
+      if(isSelf){
+        ctx.fillStyle = "rgba(208,69,60,.42)"; ctx.fill();
+        ctx.strokeStyle = "#e56a5f"; ctx.lineWidth = 2.5/pick.k; ctx.stroke();
+        ctx.lineWidth = 1/pick.k;
+      } else if(occ){
+        ctx.fillStyle = "rgba(208,69,60,.16)"; ctx.fill();
+        ctx.strokeStyle = "rgba(208,69,60,.75)"; ctx.stroke();
+      } else if(pick.hover && pick.hover.col === col && pick.hover.row === row){
+        ctx.fillStyle = "rgba(242,236,223,.14)"; ctx.fill();
+        ctx.strokeStyle = "rgba(242,236,223,.7)"; ctx.stroke();
+      } else {
+        ctx.strokeStyle = "rgba(42,33,24,.55)"; ctx.stroke();
+      }
+    }
+  }
+
+  /* beacon crosshair */
+  if(!pick.multi && t && t.px != null && t.py != null && m.imgW && m.imgH){
+    var bx = (t.px / m.imgW) * g.gw, by = (t.py / m.imgH) * g.gh;
+    ctx.strokeStyle = "#e56a5f"; ctx.lineWidth = 2/pick.k;
+    ctx.beginPath();
+    ctx.moveTo(bx - 14/pick.k, by); ctx.lineTo(bx + 14/pick.k, by);
+    ctx.moveTo(bx, by - 14/pick.k); ctx.lineTo(bx, by + 14/pick.k);
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(bx, by, 8/pick.k, 0, Math.PI*2); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function nearestHex(wx, wy){
+  var m = S.map, best = null, bd = Infinity;
+  for(var row=0; row<m.rows; row++){
+    for(var col=0; col<m.cols; col++){
+      var c = hexCenter(col,row);
+      var dx = c.x - wx, dy = c.y - wy, d = dx*dx + dy*dy;
+      if(d < bd){ bd = d; best = {col:col,row:row}; }
+    }
+  }
+  return best;
+}
+function readout(){
+  var t = pick.target;
+  if(pick.multi){
+    var n = parseHexes(t && t.hexes).length;
+    $("pickColRow").textContent = n ? n + " chosen" : "\u2014";
+    $("pickPx").textContent = "\u2014";
+    return;
+  }
+  $("pickColRow").textContent = (t && t.col != null && t.row != null)
+    ? String(t.col).padStart(2,"0") + "." + String(t.row).padStart(2,"0") : "—";
+  $("pickPx").textContent = (t && t.px != null && t.py != null)
+    ? Math.round(t.px) + ", " + Math.round(t.py) : "—";
+}
+
+/* ============================================================
+   Wiring
+   ============================================================ */
+function newObj(which){
+  var o = stamp(which === "env" ? { name:"", features:[] } : { name:"", features:[] });
+  o._auto = true;
+  (which === "env" ? S.entries : S.adversaries).push(o);
+  S.sel[which] = o._uid;
+  S.q[which] = ""; $(which + "Search").value = "";
+  refresh(which);
+  setTimeout(function(){
+    var el = $(which + "Form").querySelector('input[data-k="name"]');
+    if(el) el.focus();
+  }, 30);
+}
+
+["env","adv"].forEach(function(which){
+  $(which + "Search").addEventListener("input", function(e){
+    S.q[which] = e.target.value.trim(); renderList(which);
+  });
+  $(which + "List").addEventListener("click", function(e){
+    var b = e.target.closest(".hit"); if(!b) return;
+    S.sel[which] = Number(b.getAttribute("data-uid"));
+    renderList(which); renderForm(which);
+  });
+
+  var form = $(which + "Form");
+
+  /* write-through: every keystroke lands on the object */
+  form.addEventListener("input", function(e){
+    var obj = byUid(which === "env" ? S.entries : S.adversaries, S.sel[which]);
+    if(!obj) return;
+    var el = e.target, k = el.getAttribute("data-k"), fk = el.getAttribute("data-fk");
+
+    if(k){
+      var v = el.value;
+      if(el.getAttribute("data-num")) v = v === "" ? "" : Number(v);
+      setVal(obj, k, v);
+      if(k === "name"){
+        if(obj._auto !== false){
+          obj.slug = slugify(v);
+          var se = form.querySelector('input[data-k="slug"]');
+          if(se) se.value = obj.slug;
+        }
+        renderList(which);
+      }
+      if(k === "slug") obj._auto = false;
+      if(k === "adversaries") paintPickers(which, obj);
+      if(k === "tier" || k === "envType" || k === "advType" || k === "col" || k === "row") renderList(which);
+    } else if(fk){
+      var card = el.closest(".feat");
+      var i = Number(card.getAttribute("data-fi"));
+      obj.features = obj.features || [];
+      obj.features[i] = obj.features[i] || {};
+      if(el.value === "") delete obj.features[i][fk];
+      else obj.features[i][fk] = el.value;
+    }
+    persist();
+  });
+
+  form.addEventListener("click", function(e){
+    var obj = byUid(which === "env" ? S.entries : S.adversaries, S.sel[which]);
+    if(!obj) return;
+    var add = e.target.closest("[data-add]");
+    if(add){
+      var name = add.getAttribute("data-add");
+      var cur = (obj.adversaries||"").split(",").map(function(s){return s.trim();}).filter(Boolean);
+      var at = cur.indexOf(name);
+      if(at > -1) cur.splice(at,1); else cur.push(name);
+      obj.adversaries = cur.join(", ");
+      var inp = form.querySelector('input[data-k="adversaries"]');
+      if(inp) inp.value = obj.adversaries;
+      paintPickers(which, obj); persist();
+      return;
+    }
+    var act = e.target.closest("[data-act]");
+    if(!act) return;
+    var a = act.getAttribute("data-act");
+
+    if(a === "feat-add"){
+      obj.features = obj.features || [];
+      obj.features.push({ name:"", type:"", text:"" });
+      renderForm(which); persist(); return;
+    }
+    var card = act.closest(".feat");
+    if(card){
+      var i = Number(card.getAttribute("data-fi"));
+      if(a === "feat-del"){ obj.features.splice(i,1); renderForm(which); persist(); return; }
+      if(a === "feat-up" && i > 0){
+        var tmp = obj.features[i-1]; obj.features[i-1] = obj.features[i]; obj.features[i] = tmp;
+        renderForm(which); persist(); return;
+      }
+      if(a === "feat-down" && i < obj.features.length - 1){
+        var t2 = obj.features[i+1]; obj.features[i+1] = obj.features[i]; obj.features[i] = t2;
+        renderForm(which); persist(); return;
+      }
+    }
+    if(a === "del"){
+      if(!confirm('Delete "' + (obj.name || "this entry") + '"? This cannot be undone.')) return;
+      var arr = which === "env" ? S.entries : S.adversaries;
+      arr.splice(arr.indexOf(obj), 1);
+      S.sel[which] = arr.length ? arr[Math.max(0, arr.length-1)]._uid : null;
+      refresh(which); return;
+    }
+    if(a === "pick"){ openPicker(which, obj); }
+    if(a === "pick-hexes"){ openPicker(which, obj, true); }
+  });
+});
+
+document.querySelectorAll("[data-new]").forEach(function(b){
+  b.addEventListener("click", function(){ newObj(b.getAttribute("data-new")); });
+});
+document.querySelectorAll("[data-dup]").forEach(function(b){
+  b.addEventListener("click", function(){
+    var which = b.getAttribute("data-dup");
+    var arr = which === "env" ? S.entries : S.adversaries;
+    var src = byUid(arr, S.sel[which]);
+    if(!src){ alert("Select an entry to duplicate first."); return; }
+    var copy = JSON.parse(JSON.stringify(src));
+    delete copy._uid;
+    copy.name = (src.name || "Untitled") + " copy";
+    copy.slug = slugify(copy.name);
+    copy._auto = true;
+    delete copy.col; delete copy.row; delete copy.px; delete copy.py;
+    stamp(copy); arr.push(copy);
+    S.sel[which] = copy._uid;
+    refresh(which);
+  });
+});
+
+/* tabs */
+$("tabs").addEventListener("click", function(e){
+  var b = e.target.closest(".tab"); if(!b) return;
+  var t = b.getAttribute("data-tab");
+  S.tab = t;
+  document.querySelectorAll(".tab").forEach(function(x){ x.classList.toggle("is-on", x === b); });
+  document.querySelectorAll(".pane").forEach(function(p){
+    p.classList.toggle("is-on", p.id === "pane-" + t);
+  });
+  if(t === "out") renderOut();
+});
+
+/* settings */
+function bindSetting(id, obj, key, num){
+  var el = $(id);
+  el.value = obj[key] == null ? "" : obj[key];
+  el.addEventListener("input", function(){
+    obj[key] = num ? (el.value === "" ? "" : Number(el.value)) : el.value;
+    persist();
+  });
+}
+function bindAllSettings(){
+  bindSetting("setLinkBase", S.config, "linkBase");
+  bindSetting("setMapPage", S.config, "mapPage");
+  bindSetting("setCols", S.map, "cols", true);
+  bindSetting("setRows", S.map, "rows", true);
+  bindSetting("setHexSize", S.map, "hexSize", true);
+  bindSetting("setImgW", S.map, "imgW", true);
+  bindSetting("setImgH", S.map, "imgH", true);
+  bindSetting("setBaseImage", S.map, "baseImage");
+}
+
+/* import */
+function adopt(d){
+  S.config.linkBase = d.linkBase != null ? d.linkBase : S.config.linkBase;
+  S.config.mapPage  = d.mapPage  != null ? d.mapPage  : S.config.mapPage;
+  S.entries     = (Array.isArray(d.entries) ? d.entries : []).map(function(e){ e._auto = false; return stamp(e); });
+  S.adversaries = (Array.isArray(d.adversaries) ? d.adversaries : []).map(function(e){ e._auto = false; return stamp(e); });
+  S.sel.env = S.entries.length ? S.entries[0]._uid : null;
+  S.sel.adv = S.adversaries.length ? S.adversaries[0]._uid : null;
+  bindAllSettings();
+  refresh("env"); refresh("adv");
+}
+function importText(txt, fromGitHub){
+  var n = $("importNote");
+  txt = String(txt || "").trim();
+  if(!txt){ n.textContent = "Nothing to read — paste a file first."; return; }
+  var d = null;
+  try{
+    if(txt.charAt(0) === "{"){ d = JSON.parse(txt); }
+    else {
+      var w = {};
+      new Function("window", txt + "\n;return window;")(w);
+      d = w.CEALLA_DATA;
+    }
+  }catch(err){
+    n.textContent = "Could not read that: " + err.message;
+    return;
+  }
+  if(!d || typeof d !== "object"){
+    n.textContent = "That parsed, but no CEALLA_DATA object came out of it.";
+    return;
+  }
+  adopt(d);
+  n.textContent = "Loaded " + (d.entries||[]).length + " environments and " +
+    (d.adversaries||[]).length + " adversaries.";
+  if(!fromGitHub) lastSha = null;   /* pasted text is not necessarily the published version */
+}
+$("btnImport").addEventListener("click", function(){ importText($("importText").value); });
+$("btnImportFile").addEventListener("click", function(){ $("fileInput").click(); });
+$("fileInput").addEventListener("change", function(e){
+  var f = e.target.files[0]; if(!f) return;
+  var r = new FileReader();
+  r.onload = function(){ $("importText").value = r.result; importText(r.result); };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("btnClear").addEventListener("click", function(){
+  if(!confirm("Clear every entry in this tool? Export first if you want to keep this draft.")) return;
+  S.entries = []; S.adversaries = [];
+  S.sel.env = null; S.sel.adv = null;
+  refresh("env"); refresh("adv");
+});
+
+/* export */
+function download(){
+  var blob = new Blob([build()], { type: "text/javascript" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = "cealla-data.js";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+$("btnDownload").addEventListener("click", download);
+$("btnDownload2").addEventListener("click", download);
+$("btnCopy").addEventListener("click", function(){
+  var txt = build();
+  var done = function(){ $("btnCopy").textContent = "Copied"; setTimeout(function(){ $("btnCopy").textContent = "Copy to clipboard"; }, 1400); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done, function(){ fallbackCopy(txt); done(); });
+  } else { fallbackCopy(txt); done(); }
+});
+function fallbackCopy(t){
+  var ta = document.createElement("textarea");
+  ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  ta.remove();
+}
+document.addEventListener("keydown", function(e){
+  if((e.ctrlKey || e.metaKey) && e.key === "s"){ e.preventDefault(); download(); }
+  if(e.key === "Escape" && $("pickModal").classList.contains("is-on")) closePicker();
+});
+
+/* picker wiring */
+document.querySelectorAll(".mode").forEach(function(b){
+  b.addEventListener("click", function(){
+    pick.mode = b.getAttribute("data-mode");
+    document.querySelectorAll(".mode").forEach(function(x){ x.classList.toggle("is-on", x === b); });
+    $("pickMode").textContent = pick.mode === "hex"
+      ? "Click a hex to set its col and row."
+      : "Click the drawn symbol to pin the beacon there.";
+  });
+});
+$("pickReset").addEventListener("click", resetView);
+$("pickDone").addEventListener("click", function(){
+  closePicker();
+  renderForm(pick.which); renderList(pick.which); persist();
+});
+$("pickModal").addEventListener("mousedown", function(e){
+  if(e.target === $("pickModal")) closePicker();
+});
+
+var cv = $("pickCanvas");
+cv.addEventListener("mousedown", function(e){
+  pick.drag = { x: e.clientX, y: e.clientY, panX: pick.panX, panY: pick.panY };
+  pick.moved = false;
+});
+window.addEventListener("mousemove", function(e){
+  if(pick.drag){
+    var dx = e.clientX - pick.drag.x, dy = e.clientY - pick.drag.y;
+    if(Math.abs(dx) > 3 || Math.abs(dy) > 3) pick.moved = true;
+    pick.panX = pick.drag.panX + dx; pick.panY = pick.drag.panY + dy;
+    drawPick();
+    return;
+  }
+  if(!$("pickModal").classList.contains("is-on")) return;
+  var r = cv.getBoundingClientRect();
+  if(e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom){
+    if(pick.hover){ pick.hover = null; drawPick(); }
+    return;
+  }
+  var w = toWorld(e.clientX - r.left, e.clientY - r.top);
+  var h = nearestHex(w.x, w.y);
+  if(!pick.hover || pick.hover.col !== h.col || pick.hover.row !== h.row){
+    pick.hover = h; drawPick();
+  }
+});
+window.addEventListener("mouseup", function(){ pick.drag = null; });
+cv.addEventListener("click", function(e){
+  if(pick.moved || !pick.target) return;
+  var r = cv.getBoundingClientRect();
+  var w = toWorld(e.clientX - r.left, e.clientY - r.top);
+  var g = geo();
+  if(pick.mode === "hex"){
+    var h = nearestHex(w.x, w.y);
+    if(pick.multi){
+      var cur = parseHexes(pick.target.hexes), at = -1;
+      for(var ci = 0; ci < cur.length; ci++){
+        if(cur[ci].col === h.col && cur[ci].row === h.row){ at = ci; break; }
+      }
+      if(at > -1) cur.splice(at, 1); else cur.push({ col: h.col, row: h.row });
+      pick.target.hexes = cur.map(function(x){ return hexKey(x.col, x.row); }).join(", ");
+    } else {
+      pick.target.col = h.col; pick.target.row = h.row;
+    }
+  } else {
+    pick.target.px = Math.round((w.x - g.x0) / g.gw * S.map.imgW);
+    pick.target.py = Math.round((w.y - g.y0) / g.gh * S.map.imgH);
+  }
+  readout(); drawPick(); persist();
+});
+cv.addEventListener("wheel", function(e){
+  e.preventDefault();
+  var r = cv.getBoundingClientRect();
+  var mx = e.clientX - r.left, my = e.clientY - r.top;
+  var before = toWorld(mx, my);
+  var f = e.deltaY < 0 ? 1.15 : 1/1.15;
+  pick.k = Math.max(0.05, Math.min(40, pick.k * f));
+  var after = toWorld(mx, my);
+  var g = geo();
+  pick.panX += (after.x - before.x) * pick.k;
+  pick.panY += (after.y - before.y) * pick.k;
+  drawPick();
+}, { passive:false });
+window.addEventListener("resize", function(){
+  if($("pickModal").classList.contains("is-on")){ sizeCanvas(); drawPick(); }
+});
+
+/* datalist for feature types */
+var dl = document.createElement("datalist");
+dl.id = "featTypes";
+["Action","Reaction","Passive"].forEach(function(t){
+  var o = document.createElement("option"); o.value = t; dl.appendChild(o);
+});
+document.body.appendChild(dl);
+
+/* ============================================================
+   GitHub publishing
+   ============================================================ */
+gh = { owner:"", repo:"", branch:"main", path:"cealla-data.js", msg:"Update Cealla data" };
+var ghToken = "";          /* memory only unless the box below is ticked */
+var TKEY = "cealla-forge-token";
+
+/* The artifact sandbox blocks outbound calls to GitHub and forbids
+   localStorage, so the remember option only appears in a downloaded
+   copy. window.storage is the tell that we are still in the sandbox. */
+var sandboxed = !!(typeof window.storage !== "undefined" && window.storage);
+
+function b64(str){
+  var bytes = new TextEncoder().encode(str), bin = "";
+  for(var i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+function unb64(s){
+  var bin = atob(String(s).replace(/\s/g, ""));
+  var bytes = new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function logPub(line, reset){
+  var el = $("pubLog");
+  var t = new Date().toTimeString().slice(0,8);
+  if(reset) el.textContent = "";
+  el.textContent += (el.textContent ? "\n" : "") + t + "  " + line;
+  el.scrollTop = el.scrollHeight;
+}
+function ghReady(){
+  if(!gh.owner || !gh.repo){ logPub("Set an owner and a repository first."); return false; }
+  if(!ghToken){ logPub("Paste an access token first."); return false; }
+  return true;
+}
+function api(path, opts){
+  opts = opts || {};
+  var h = {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+    "Authorization": "Bearer " + ghToken
+  };
+  if(opts.body) h["Content-Type"] = "application/json";
+  return fetch("https://api.github.com" + path, {
+    method: opts.method || "GET",
+    headers: h,
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  }).then(function(r){
+    return r.text().then(function(txt){
+      var json = null;
+      try{ json = txt ? JSON.parse(txt) : null; }catch(e){}
+      return { ok:r.ok, status:r.status, json:json, raw:txt };
+    });
+  });
+}
+function explain(r){
+  if(r.status === 401) return "401 — the token was rejected. Check it was copied whole and has not expired.";
+  if(r.status === 403) return "403 — the token is valid but lacks Contents write on this repository, or you have hit a rate limit.";
+  if(r.status === 404) return "404 — no such repository, or the token cannot see it. Fine-grained tokens must list this repo explicitly.";
+  if(r.status === 409 || r.status === 422) return r.status + " — the file changed on GitHub since we last looked.";
+  var m = r.json && r.json.message ? r.json.message : r.raw.slice(0,120);
+  return r.status + " — " + m;
+}
+
+function testConn(){
+  if(!ghReady()) return;
+  logPub("Checking " + gh.owner + "/" + gh.repo + "…", true);
+  api("/repos/" + gh.owner + "/" + gh.repo).then(function(r){
+    if(!r.ok){ logPub(explain(r)); return; }
+    logPub("Repository found. Default branch is " + r.json.default_branch + ".");
+    logPub("Looking for " + gh.path + " on " + gh.branch + "…");
+    return api("/repos/" + gh.owner + "/" + gh.repo + "/contents/" +
+               encodeURIComponent(gh.path) + "?ref=" + encodeURIComponent(gh.branch))
+      .then(function(f){
+        if(f.status === 404){ logPub("Not there yet — the first publish will create it."); return; }
+        if(!f.ok){ logPub(explain(f)); return; }
+        logPub("Found it, " + (f.json.size||0) + " bytes. The next publish will replace it.");
+      });
+  }).catch(function(e){
+    logPub("The request never completed: " + e.message);
+    logPub(netHint());
+  });
+}
+
+function putFile(content, sha, attempt){
+  var body = { message: gh.msg || "Update Cealla data", content: b64(content), branch: gh.branch || "main" };
+  if(sha) body.sha = sha;
+  return api("/repos/" + gh.owner + "/" + gh.repo + "/contents/" + encodeURIComponent(gh.path),
+             { method:"PUT", body:body })
+    .then(function(r){
+      if(r.ok) return r;
+      /* someone else committed between our read and our write — re-read once */
+      if((r.status === 409 || r.status === 422) && attempt < 2){
+        logPub("The file moved under us. Re-reading and trying again…");
+        return api("/repos/" + gh.owner + "/" + gh.repo + "/contents/" +
+                   encodeURIComponent(gh.path) + "?ref=" + encodeURIComponent(gh.branch))
+          .then(function(f){ return putFile(content, f.ok ? f.json.sha : null, attempt + 1); });
+      }
+      logPub(explain(r));
+      return null;
+    });
+}
+
+/* The SHA of the version this session started from. Publishing when the
+   remote SHA has moved on means someone else committed in the meantime
+   and their work is about to be overwritten. */
+var lastSha = null;
+
+function pullFile(){
+  if(!ghReady()) return;
+  logPub("Fetching " + gh.path + " from " + gh.branch + "…", true);
+  api("/repos/" + gh.owner + "/" + gh.repo + "/contents/" +
+      encodeURIComponent(gh.path) + "?ref=" + encodeURIComponent(gh.branch))
+  .then(function(f){
+    if(f.status === 404){ logPub("Nothing published yet — there is nothing to load."); return; }
+    if(!f.ok){ logPub(explain(f)); return; }
+    var txt;
+    try{ txt = unb64(f.json.content); }
+    catch(e){ logPub("The file came back but could not be decoded: " + e.message); return; }
+    if(S.entries.length || S.adversaries.length){
+      if(!confirm("Loading the live file replaces everything currently in this tool. Continue?")) {
+        logPub("Left alone."); return;
+      }
+    }
+    $("importText").value = txt;
+    importText(txt, true);
+    lastSha = f.json.sha;
+    logPub("Loaded " + S.entries.length + " environments and " + S.adversaries.length +
+           " adversaries at " + lastSha.slice(0,7) + ".");
+    logPub("You are now editing on top of the published version.");
+  })
+  .catch(function(e){ logPub("The request never completed: " + e.message); logPub(netHint()); });
+}
+
+function netHint(){
+  if(sandboxed) return "Calls to GitHub are blocked in this chat window. Open the hosted copy instead.";
+  if(location.protocol === "file:")
+    return "This page is open as a file:// URL, which browsers may block. Open the hosted copy at your github.io address, or serve this folder over http.";
+  return "Check the connection and the repository fields, then try again.";
+}
+
+function publish(){
+  if(!ghReady()) return;
+  var bad = validate().filter(function(i){ return i.sev === "error"; });
+  if(bad.length && !confirm(bad.length + " problem" + (bad.length>1?"s":"") +
+      " will break something on the site. The Export tab lists them. Publish anyway?")) return;
+
+  logPub("Reading the current file…", true);
+  api("/repos/" + gh.owner + "/" + gh.repo + "/contents/" +
+      encodeURIComponent(gh.path) + "?ref=" + encodeURIComponent(gh.branch))
+  .then(function(f){
+    var sha = null;
+    if(f.ok){
+      sha = f.json.sha;
+      if(lastSha === null){
+        if(!confirm("There is already a published file, and this session never loaded it.\n\n" +
+                    "Publishing replaces it entirely, so anything in the published version that is not in this draft will be lost.\n\n" +
+                    "Load the live file first, or continue if you know this draft is current.")) {
+          logPub("Stopped. Use \u201cLoad the live file\u201d first."); return null;
+        }
+      } else if(lastSha !== sha){
+        if(!confirm("The file on GitHub has changed since you loaded it (" +
+                    lastSha.slice(0,7) + " \u2192 " + sha.slice(0,7) + ").\n\n" +
+                    "A newer version was published from somewhere else. Continuing overwrites it.\n\n" +
+                    "Load the live file and redo your edits, or continue to overwrite.")) {
+          logPub("Stopped. Remote is at " + sha.slice(0,7) + ", you started from " + lastSha.slice(0,7) + ".");
+          return null;
+        }
+      }
+      logPub("Found the existing file. Committing an update…");
+    }
+    else if(f.status === 404){ logPub("No file there yet. Creating it…"); }
+    else { logPub(explain(f)); return null; }
+    return putFile(build(), sha, 1);
+  })
+  .then(function(r){
+    if(!r || !r.ok) return;
+    var c = r.json.commit || {};
+    if(r.json.content && r.json.content.sha) lastSha = r.json.content.sha;
+    logPub("Committed as " + (c.sha ? c.sha.slice(0,7) : "?") + ".");
+    logPub(S.entries.length + " environments, " + S.adversaries.length + " adversaries are now live-bound.");
+    logPub("GitHub Pages rebuilds in about a minute, then caches for roughly ten.");
+    if(c.html_url) logPub(c.html_url);
+  })
+  .catch(function(e){ logPub("The request never completed: " + e.message); logPub(netHint()); });
+}
+
+function paintUrls(){
+  var o = gh.owner || "USER", r = gh.repo || "REPO";
+  $("pagesUrls").textContent =
+    '<script src="https://' + o + '.github.io/' + r + '/' + (gh.path || "cealla-data.js") + '"><\/script>';
+}
+
+function bindGh(id, key){
+  var el = $(id);
+  el.value = gh[key] || "";
+  el.addEventListener("input", function(){ gh[key] = el.value.trim(); paintUrls(); persist(); });
+}
+/* Served from https://<owner>.github.io/<repo>/... — the address already
+   names the repository, so fill it in rather than making people type it. */
+(function(){
+  var m = location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
+  if(!m) return;
+  if(!gh.owner) gh.owner = m[1];
+  var seg = location.pathname.split("/").filter(Boolean);
+  if(!gh.repo && seg.length > 1) gh.repo = seg[0];
+})();
+
+bindGh("ghOwner","owner"); bindGh("ghRepo","repo"); bindGh("ghBranch","branch");
+bindGh("ghPath","path"); bindGh("ghMsg","msg");
+
+$("ghToken").addEventListener("input", function(){
+  ghToken = this.value.trim();
+  if(!sandboxed && $("ghRemember").checked){
+    try{ localStorage.setItem(TKEY, ghToken); }catch(e){}
+  }
+});
+if(sandboxed){
+  $("ghTokenNote").textContent = "Held in memory for this session only. Calls to GitHub are blocked inside this chat window — download the file and open it locally to publish.";
+} else {
+  $("ghRememberRow").hidden = false;
+  $("ghTokenNote").textContent = /\.github\.io$/i.test(location.hostname)
+    ? "Held in memory unless you tick the box. Saved tokens are readable by every GitHub Pages site under this same github.io address, so only tick it if you control all of them. Reach this page from a bookmark, never a search result."
+    : "Held in memory for this session unless you tick the box. Never put this file anywhere public while a token is saved in it.";
+  var saved = null;
+  try{ saved = localStorage.getItem(TKEY); }catch(e){}
+  if(saved){ ghToken = saved; $("ghToken").value = saved; $("ghRemember").checked = true; }
+  $("ghRemember").addEventListener("change", function(){
+    try{
+      if(this.checked) localStorage.setItem(TKEY, ghToken);
+      else localStorage.removeItem(TKEY);
+    }catch(e){}
+  });
+}
+$("btnTest").addEventListener("click", testConn);
+$("btnPull").addEventListener("click", pullFile);
+$("btnPublish").addEventListener("click", publish);
+paintUrls();
+
+/* ============================================================
+   Boot
+   ============================================================ */
+bindAllSettings();
+counts();
+renderList("env"); renderForm("env");
+renderList("adv"); renderForm("adv");
+note(store.ok ? "Draft kept in this browser" : "Export to save");
+
+store.get(SKEY).then(function(raw){
+  if(!raw) return;
+  try{
+    var d = JSON.parse(raw);
+    if(d.map) S.map = Object.assign(S.map, d.map);
+    if(d.gh){
+      Object.keys(d.gh).forEach(function(k){ if(d.gh[k]) gh[k] = d.gh[k]; });
+      ["Owner:owner","Repo:repo","Branch:branch","Path:path","Msg:msg"].forEach(function(m){
+        var s = m.split(":"); $("gh" + s[0]).value = gh[s[1]] || "";
+      });
+      paintUrls();
+    }
+    adopt({ linkBase: d.config && d.config.linkBase, mapPage: d.config && d.config.mapPage,
+            entries: d.entries, adversaries: d.adversaries });
+  }catch(e){}
+});
+})();
+</script>
+</body>
+</html>
