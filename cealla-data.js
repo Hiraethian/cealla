@@ -3,7 +3,7 @@
    Loaded by the hex map, the environment index, and the
    adversary index. Entries carrying col/row also become
    lit hexes on the map.
-   Generated 2026-08-13 by the Cealla Data Forge.
+   Generated 2026-08-19 by the Cealla Data Forge.
    ============================================================ */
 window.CEALLA_DATA = {
 
@@ -38,9 +38,44 @@ window.CEALLA_DATA = {
         { name: "Riverside Glen: Eyes Everywhere", type: "Reaction", text: "On a result with Fear, you can spend a Fear to have someone loyal to the Courtiers overhear the party’s plans to defeat them. A PC must succeed on an Instinct <b>Reaction Roll</b> to notice that the group has been overheard so they can try to intercept the witness before the PCs are exposed." },
         { name: "Castle Heights: Someone Comes to Town", type: "Action", text: "Introduce a significant NPC who wants to hire the party for something or who relates to a PC’s background.   " },
         { name: "The Warrens: It’d Be A Shame If Something Happened To Your Store", type: "Passive", text: "The PCs witness as enforcers of the Thornshard Syndicate shake down a local general goods store." }
+      ] },
+
+    { name: "Coral Palace Ambush", slug: "coral-palace-ambush",
+      kind: "city", tier: 1, envType: "Event",
+      flavor: "The Coral Palace Curios has a strange air about it as an undead horde descends upon Magda’s shop...",
+      impulses: "Kill the Witch, Overwhelm the Living",
+      difficulty: 11, adversaries: "Undead Mass, Sunken Skeleton",
+      features: [
+        { name: "Unending Horde", type: "Action", text: "The dead can only be halted through Magda's ritual being completed. After a horde of Sunken Skeletons have been defeated, the GM can Spend a Fear in order to  summon two more Sunken Skeletons who  rise from the dark waters and begin boarding the  deck of Magda's ship." },
+        { name: "Data Waters", type: "Passive", text: "The waters around Magda's shop are dark and turbulent as dozens of summoned undead thrash just \nbeneath the surface as they try to get above deck and to Magda. Creatures that fall in the water or choose to enter it should be considered Restrained, and will take 1d4+2 physical damage  until they end the condition." }
       ] }
   ],
 
   adversaries: [
+    { name: "Undead Mass", slug: "undead-mass",
+      tier: 1, advType: "Leader",
+      flavor: "A horrid collection of bloated corpses that is held together with a mixture of \nnecromantic magic and undersea wreckage",
+      motives: "Tear Down Walls, Crush the Living, Kill the Witch",
+      difficulty: 12, thresholds: "8/15", hp: 10, stress: 4, atk: "+3",
+      attack: { name: "Slam", range: "Very Close", damage: "1d10+2" },
+      hexes: "14.15, 15.15, 15.16",
+      features: [
+        { name: "Undying Assault", type: "Passive", text: "The Undead Mass cannot drop below 2 HP until  Magda's Ritual is completed. Upon completion  of the ritual, \nthe creature can lose its last 2 HP  and be defeated." },
+        { name: "Consume the Dead", type: "Reaction", text: "The Undead Mass consumes all undead within Close range of itself, using a Stress to do so.  For every \nHorde of Sunken Skeletons or undead absorbed, the Undead Mass increases its size,  which is represented by the recovery of 2 HP  and gaining +1 Difficulty. This ability can be  performed multiple times." },
+        { name: "Hurl", type: "Action", text: "Mark a Stress to hurl a part of it’s absorbed self  at a creature or structure. Creatures hit by or in the path of a Hurled mass must make an Agility Reaction Roll (12). If they fail, the target takes 2d10+4 Phy and take a Stress as they are knocked over. If the attack targets a wooden structure, the Break on Through countdown is increased by 2." },
+        { name: "Crushing Blow", type: "Reaction", text: "When the Undead Mass succeeds on a Slam attack, it may mark a Stress to convert it to a Crushing Blow. The target then has the temporary condition of Restrained until they  make a Strength Action Roll (12) to end it, or they are Hurled." }
+      ] },
+
+    { name: "Sunken Skeleton", slug: "sunken-skeleton",
+      tier: 1, advType: "Horde",
+      flavor: "Corpses that were not able to bind themselves to the Undead Mass, they move as a pack hoping to become part of their Leader",
+      motives: "Be Consumed, Overwhelm Enemies, Kill the Witch",
+      difficulty: 10, thresholds: "6/12", hp: 6, stress: 2, atk: "+1",
+      attack: { name: "Rend", range: "Melee", damage: "1d6+2 phy" },
+      hexes: "14.15, 15.15, 15.16",
+      features: [
+        { name: "Group Attack", type: "Action", text: "Choose a target that is currently Restrained and  spotlight all other Sunken Skeletons in Close  range, having them move either into melee  range with the target, or moving into melee with  the Undead Mass." },
+        { name: "Clawing Grasp", type: "Reaction", text: "When the Sunken Skeleton succeeds on an  attack, they can spend a Stress to temporarily  Restrain the target, forcing them to take a Stress." }
+      ] }
   ]
 };
