@@ -102,6 +102,19 @@ window.CEALLA_DATA = {
         { name: "Neutralize the Target", type: "Passive", text: "When the Tsurada Assassin is hidden, they deal direct damage to the target. If the target is an NPC, they deal damage equal to the NPC's total health, killing them instantly. " },
         { name: "False Persona", type: "Passive", text: "A PC who rolls less than a 17 on an action roll to discover the Assassin's true identity must mark a Stress. " },
         { name: "Tactical Retreat", type: "Reaction", text: "If the Assassin  realizes they have been discovered, they mark a Stress to release a caustic smoke that fills the space, Disoriented all targets in the area. Disoriented characters have disadvantage on action rolls to find or track the Assassin until the condition is cleared.  " }
+      ] },
+
+    { name: "Tiyruuk", slug: "tiyruuk",
+      tier: 2, advType: "Skulk",
+      flavor: "A reptilian bird of prey which looks like a mix of a velociraptor and falcon.",
+      motives: "Hunt Prey, Hit & Run, Always Moving",
+      difficulty: 14, thresholds: "8/16", hp: 5, stress: 4, atk: "+2",
+      attack: { name: "Teeth & Talons", range: "Very Close", damage: "2d6+2" },
+      hexes: "18.14, 17.14, 17.13, 12.04, 11.04, 10.05, 11.05, 12.05, 12.06, 11.06, 10.06, 09.06, 09.05, 21.11, 22.10, 23.10, 23.09, 24.09, 25.09, 25.10, 24.10, 24.11, 23.11, 22.11, 25.11, 30.14, 29.15, 29.14, 28.15, 29.16, 30.16, 29.17, 29.18, 30.18, 28.18, 28.17, 27.17, 28.16, 30.15, 31.14, 31.15, 31.16, 32.16, 33.16, 34.16, 33.15, 32.15, 34.15, 34.17, 29.19, 28.19, 27.18, 37.20, 38.20, 38.21, 39.20, 40.20, 43.26, 42.25, 43.24, 42.23, 42.22, 41.22, 40.21, 39.21, 40.22, 40.23, 41.24, 41.23, 42.24, 41.25, 42.26, 37.21, 39.22, 38.22, 39.23, 38.25, 38.24, 39.24, 39.25, 40.24, 40.25, 41.26, 40.26, 39.27, 40.27, 41.27, 42.27, 15.22, 14.21, 13.20, 13.19, 14.20, 13.21, 12.21, 12.20, 12.19",
+      features: [
+        { name: "Master of the Sky", type: "Passive", text: "While the Tiyruuk is airborne, its Difficulty is increased by +2. " },
+        { name: "Peregrine Dive", type: "Action", text: "<b>Spend a Fear</b> to have the Tiyruuk attack a target within Far range. If successful, the Tiyruuk deals 2d10+2 physical damage and forces the target to to make an Agility Reaction Roll or become <i>Restrained</i>. If the target fails the reaction roll, the Tiyruuk immediately sinks its talons into the target and takes back off to Far range once more. " },
+        { name: "Smash On the Rocks", type: "Action", text: "While airborne, the Tiyruuk can release a Restrained target to be smashed upon the rocks or the ground from the fall. If their falling isn't halted before their next action, the target takes 2d12+4 physical damage." }
       ] }
   ]
 };
