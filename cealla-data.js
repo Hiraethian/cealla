@@ -3,7 +3,7 @@
    Loaded by the hex map, the environment index, and the
    adversary index. Entries carrying col/row also become
    lit hexes on the map.
-   Generated 2026-08-19 by the Cealla Data Forge.
+   Generated 2026-08-20 by the Cealla Data Forge.
    ============================================================ */
 window.CEALLA_DATA = {
 
@@ -48,6 +48,18 @@ window.CEALLA_DATA = {
       features: [
         { name: "Unending Horde", type: "Action", text: "The dead can only be halted through Magda's ritual being completed. After a horde of Sunken Skeletons have been defeated, the GM can Spend a Fear in order to  summon two more Sunken Skeletons who  rise from the dark waters and begin boarding the  deck of Magda's ship." },
         { name: "Data Waters", type: "Passive", text: "The waters around Magda's shop are dark and turbulent as dozens of summoned undead thrash just \nbeneath the surface as they try to get above deck and to Magda. Creatures that fall in the water or choose to enter it should be considered Restrained, and will take 1d4+2 physical damage  until they end the condition." }
+      ] },
+
+    { name: "The Saluting Sardelle", slug: "the-saluting-sardelle",
+      kind: "wild", tier: 2, envType: "Event",
+      col: 15, row: 16,
+      flavor: "A famed chain of roadside taverns owned by the same family of the southern Lendymirl Region is the host for an murder mystery...",
+      impulses: "Welcome All, Give Rest to the Weary, A Port in the Storm",
+      difficulty: 14, adversaries: " Tsurada Assassin",
+      features: [
+        { name: "The Dead Bard", type: "Action", text: "Just as the party arrives outside the tavern, a scream is heard from the tavern owner's wife. The bard Nayvus, a regular of the establishment, was found dead in his room. The tavern owner has detained everyone who was staying at the tavern, and implores the party to help them uncover the killer. " },
+        { name: "Meet the Cast", type: "Passive", text: "Roadside taverns and inns are well-known for attracting a unique cast of visitors, and PCs will find that tonight is no different. One of the following individuals killed Nayvus, though all may have their reasons...\n<br>\n<br>\n<b>The Traveling Merchant</b> - Arrived earlier that day, but has had bad blood with Nayvus since the last time they were together at this tavern, a brawl between them ensued.\n<br>\n<br> \n<b>The Local Farmer</b> - They arrived just before Nayvus did, and it is rumored they once had a more intimate relationship with the bard before things soured unexpectedly.\n<br>\n<br> \n<b>The Rival Performer</b> - They got to the Saluting Sardelle half a day after Nayvus, and seemed quite irate that they would be unable to fund their travel since Nayvus was already booked for the next few days.\n<br>\n<br> \n<b>The Quiet Mercenary</b> - A person of few words, they claim to have been hired to protect Nayvus once before, but when it was time to pay up he fled in the night. \n<br>\n<br> \n<b>The Tavern Owner</b> - A frequent host for Nayvus who initiated this investigation, the others believe they killed him over a long overdue tab, and they are trying to pin it on one of the travelers. \n<br>\n<br> \n<b>The Tavern Owner's Wife</b> - The one who found Nayvus dead, the Local Farmer believe Nayvus left them to pursue the Tavern Owner's Wife who feared their affair being discovered. " },
+        { name: "Countdown to Discovery", type: "Reaction", text: "As PCs begin their investigation, they will need to perform <b>Action Rolls (17)</b> to figure out who the killer actually is. In reality, it is a Tsurada Assassin posing as one of the six individuals above that killed Nayvus but is trying to make it seem to have not been a hired killing. Before the investigation begins, roll a 1d6 (or choose) to determine which NPC above has actually been replaced by the Tsurada Assassin. \n<br>\n<br> \nNext, set an <b>Escape Countdown (4)</b> which increases by one everytime PCs fail an Action Roll (or by two on a critical failure) to search for clues about who committed the murder. After two failures, infighting amongst the  people within the tavern will begin. At four failures, roll 2d6 (or choose) to select two of  the NPCs above to get into an altercation where one of them is killed in the fight. In this confusion, the actual killer will escape and become untraceable by the PCs. \n<br>\n<br> \nShould the PCs be able to succeed on four Action Rolls before failing the Escape Countdown, they will discover proof that the killer is actually a paid assassin posing as one of the NPCs above. They can then either attempt to kill or subdue the assassin, and prove the innocence of all the others present. " }
       ] }
   ],
 
@@ -76,6 +88,20 @@ window.CEALLA_DATA = {
       features: [
         { name: "Group Attack", type: "Action", text: "Choose a target that is currently Restrained and  spotlight all other Sunken Skeletons in Close  range, having them move either into melee  range with the target, or moving into melee with  the Undead Mass." },
         { name: "Clawing Grasp", type: "Reaction", text: "When the Sunken Skeleton succeeds on an  attack, they can spend a Stress to temporarily  Restrain the target, forcing them to take a Stress." }
+      ] },
+
+    { name: " Tsurada Assassin", slug: "tsurada-assassin",
+      tier: 2, advType: "Skulk",
+      flavor: "A member of the assassination cult known as Tsurada, who specializes in infiltration and subterfuge for the execution of their killings.",
+      motives: "Remain Hidden, Identify the Target, Go Undiscovered",
+      difficulty: 14, thresholds: "8/15", hp: 5, stress: 4, atk: "+3",
+      attack: { name: "Serrated Dirk", range: "Melee", damage: "2d8+2" },
+      experience: "Hide in Plain Sight +2",
+      hexes: "15.16",
+      features: [
+        { name: "Neutralize the Target", type: "Passive", text: "When the Tsurada Assassin is hidden, they deal direct damage to the target. If the target is an NPC, they deal damage equal to the NPC's total health, killing them instantly. " },
+        { name: "False Persona", type: "Passive", text: "A PC who rolls less than a 17 on an action roll to discover the Assassin's true identity must mark a Stress. " },
+        { name: "Tactical Retreat", type: "Reaction", text: "If the Assassin  realizes they have been discovered, they mark a Stress to release a caustic smoke that fills the space, Disoriented all targets in the area. Disoriented characters have disadvantage on action rolls to find or track the Assassin until the condition is cleared.  " }
       ] }
   ]
 };
