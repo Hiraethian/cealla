@@ -302,7 +302,7 @@ input::placeholder,textarea::placeholder{color:#5f5b53}
             <input id="setLinkBase" placeholder="/environments">
             <p class="hint">Path of the Squarespace page holding the environment index. The map's "Read the full entry" links go there, anchored to the entry &mdash; e.g. <code>/environments#jhess</code>.</p></div>
           <div class="f"><label for="setMapPage">Map page</label>
-            <input id="setMapPage" placeholder="/world-map">
+            <input id="setMapPage" placeholder="/testhex">
             <p class="hint">Path of the page holding the hex map. "View on map" links go there, anchored to the entry's hex. Leave blank to hide those links.</p></div>
         </div>
       </div>
@@ -457,7 +457,7 @@ input::placeholder,textarea::placeholder{color:#5f5b53}
    Defaults — mirror the widget CONFIG blocks
    ============================================================ */
 var DEFAULTS = {
-  config: { linkBase: "/environments", mapPage: "/world-map" },
+  config: { linkBase: "/environments", mapPage: "/testhex" },
   map: {
     baseImage: "https://static1.squarespace.com/static/673f340165a71b0fc817fb27/t/6a74aa281adc2239c6292295/1786030633171/Cealla+Map+HEX+%281%29.png",
     cols: 44, rows: 36, hexSize: 21, imgW: 4961, imgH: 3508
@@ -595,9 +595,9 @@ var ADV_FIELDS = [
     { k:"experience", label:"Experience", type:"text", cls:"wide", ph:"Scavenging +2" }
   ]},
   { g:"Known locations", fields:[
-    { k:"hexes", label:"Found at hexes", type:"text", cls:"wide", ph:"12.07, 20.13",
-      hint:"Comma-separated col.row pairs. The adversary index renders each one as a chip that opens that hex on the world map." },
-    { k:"__pickhexes", label:"", type:"pickhexes" }
+    { k:"location", label:"Where it is found", type:"textarea", cls:"wide",
+      ph:"Hunts the drainage tunnels beneath the Ardenfell market, and nests in the sunken barges out on the mire.",
+      hint:"A sentence or two, printed as prose in the adversary catalogue. Inline <b>bold</b> is allowed. No coordinates \u2014 the catalogue's map button is the way to the map." }
   ]}
 ];
 
@@ -626,10 +626,6 @@ function slugify(s){
 }
 
 function fieldHTML(f, obj, idp){
-  if(f.type === "pickhexes"){
-    return '<div class="f wide"><button class="btn sm ghost" data-act="pick-hexes">Pick hexes on the map</button>' +
-      '<p class="hint">Click hexes to toggle them on and off. The field above updates when you press Done.</p></div>';
-  }
   if(f.type === "pick"){
     return '<div class="f wide"><button class="btn sm ghost" data-act="pick">Open the map picker</button>' +
       '<p class="hint">Column and row light the hex up. The beacon pair is optional — set it to move the ping onto the drawn symbol instead of the hex centre.</p></div>';
@@ -831,7 +827,7 @@ function entryBlock(o, kind){
     if(atk.length) L.push("attack: { " + atk.join(", ") + " }");
 
     if(has(o,"experience")) L.push(pair(o,"experience"));
-    if(has(o,"hexes")) L.push(pair(o,"hexes"));
+    if(has(o,"location")) L.push(pair(o,"location"));
   }
 
   var f = featLines(o, 6);
@@ -919,18 +915,6 @@ function validate(){
     });
   });
 
-  S.adversaries.forEach(function(e){
-    if(!e.hexes) return;
-    var who = 'Adversary "' + (e.name || "Untitled") + '"';
-    String(e.hexes).split(",").forEach(function(s){
-      s = s.trim(); if(!s) return;
-      var m = /^(\d{1,3})\.(\d{1,3})$/.exec(s);
-      if(!m){ add("warn", who, 'Hex "' + s + '" is not in col.row form (e.g. 12.07), so its map link will not land anywhere.'); return; }
-      if(Number(m[1]) >= S.map.cols || Number(m[2]) >= S.map.rows)
-        add("error", who, "Hex " + s + " sits outside the " + S.map.cols + " x " + S.map.rows + " grid.");
-    });
-  });
-
   if(!S.entries.length && !S.adversaries.length) add("warn", "File", "No entries at all. The widgets will fall back to their inline placeholders.");
   return out;
 }
@@ -949,7 +933,7 @@ function renderOut(){
    Hex picker
    ============================================================ */
 var pick = {
-  target: null, which: "env", mode: "hex", multi: false,
+  target: null, which: "env", mode: "hex",
   k: 1, panX: 0, panY: 0, img: null, imgOk: false,
   hover: null, drag: null, moved: false
 };
@@ -969,32 +953,15 @@ function hexCenter(col,row){
   var q = col - ((row - (row & 1)) / 2), r = row;
   return { x: s * SQ3 * (q + r/2), y: s * 1.5 * r };
 }
-/* "12.07, 20.13" <-> [{col,row}] for the multi-hex picker */
-function hexKey(col,row){
-  return String(col).padStart(2,"0") + "." + String(row).padStart(2,"0");
-}
-function parseHexes(str){
-  var out = [];
-  String(str == null ? "" : str).split(",").forEach(function(s){
-    var m = /^\s*(\d{1,3})\s*\.\s*(\d{1,3})\s*$/.exec(s);
-    if(m) out.push({ col: Number(m[1]), row: Number(m[2]) });
-  });
-  return out;
-}
 
-function openPicker(which, obj, multi){
-  pick.target = obj; pick.which = which; pick.multi = !!multi;
-  pick.mode = "hex"; pick.moved = false;
+
+function openPicker(which, obj){
+  pick.target = obj; pick.which = which; pick.mode = "hex"; pick.moved = false;
   $("pickModal").classList.add("is-on");
-  /* the hex/beacon switch means nothing in multi mode; hide it */
-  var modes = document.querySelector(".modes");
-  if(modes) modes.style.display = pick.multi ? "none" : "";
   document.querySelectorAll(".mode").forEach(function(b){
     b.classList.toggle("is-on", b.getAttribute("data-mode") === "hex");
   });
-  $("pickMode").textContent = pick.multi
-    ? "Click hexes to toggle where this adversary can be found."
-    : "Click a hex to set its col and row.";
+  $("pickMode").textContent = "Click a hex to set its col and row.";
   if(!pick.img || pick.img.src !== S.map.baseImage){
     pick.imgOk = false;
     pick.img = new Image();
@@ -1057,11 +1024,6 @@ function drawPick(){
     if(e.col != null && e.row != null) taken[e.col + ":" + e.row] = e;
   });
   var t = pick.target;
-  var multiSel = null;
-  if(pick.multi && t){
-    multiSel = {};
-    parseHexes(t.hexes).forEach(function(x){ multiSel[x.col + ":" + x.row] = true; });
-  }
 
   ctx.lineWidth = 1 / pick.k;
   for(var row = 0; row < m.rows; row++){
@@ -1077,9 +1039,7 @@ function drawPick(){
       ctx.closePath();
       var key = col + ":" + row;
       var occ = taken[key];
-      var isSelf = pick.multi
-        ? !!(multiSel && multiSel[key])
-        : (t && t.col === col && t.row === row);
+      var isSelf = t && t.col === col && t.row === row;
       if(isSelf){
         ctx.fillStyle = "rgba(208,69,60,.42)"; ctx.fill();
         ctx.strokeStyle = "#e56a5f"; ctx.lineWidth = 2.5/pick.k; ctx.stroke();
@@ -1097,7 +1057,7 @@ function drawPick(){
   }
 
   /* beacon crosshair */
-  if(!pick.multi && t && t.px != null && t.py != null && m.imgW && m.imgH){
+  if(t && t.px != null && t.py != null && m.imgW && m.imgH){
     var bx = (t.px / m.imgW) * g.gw, by = (t.py / m.imgH) * g.gh;
     ctx.strokeStyle = "#e56a5f"; ctx.lineWidth = 2/pick.k;
     ctx.beginPath();
@@ -1122,12 +1082,6 @@ function nearestHex(wx, wy){
 }
 function readout(){
   var t = pick.target;
-  if(pick.multi){
-    var n = parseHexes(t && t.hexes).length;
-    $("pickColRow").textContent = n ? n + " chosen" : "\u2014";
-    $("pickPx").textContent = "\u2014";
-    return;
-  }
   $("pickColRow").textContent = (t && t.col != null && t.row != null)
     ? String(t.col).padStart(2,"0") + "." + String(t.row).padStart(2,"0") : "—";
   $("pickPx").textContent = (t && t.px != null && t.py != null)
@@ -1239,7 +1193,6 @@ function newObj(which){
       refresh(which); return;
     }
     if(a === "pick"){ openPicker(which, obj); }
-    if(a === "pick-hexes"){ openPicker(which, obj, true); }
   });
 });
 
@@ -1301,7 +1254,14 @@ function adopt(d){
   S.config.linkBase = d.linkBase != null ? d.linkBase : S.config.linkBase;
   S.config.mapPage  = d.mapPage  != null ? d.mapPage  : S.config.mapPage;
   S.entries     = (Array.isArray(d.entries) ? d.entries : []).map(function(e){ e._auto = false; return stamp(e); });
-  S.adversaries = (Array.isArray(d.adversaries) ? d.adversaries : []).map(function(e){ e._auto = false; return stamp(e); });
+  S.adversaries = (Array.isArray(d.adversaries) ? d.adversaries : []).map(function(e){
+    e._auto = false;
+    /* a draft from the coordinate-chip build: keep the text as a starting
+       point for the sentence rather than silently dropping it */
+    if(e.hexes && !e.location) e.location = "Hexes " + e.hexes + ".";
+    delete e.hexes;
+    return stamp(e);
+  });
   S.sel.env = S.entries.length ? S.entries[0]._uid : null;
   S.sel.adv = S.adversaries.length ? S.adversaries[0]._uid : null;
   bindAllSettings();
@@ -1430,16 +1390,7 @@ cv.addEventListener("click", function(e){
   var g = geo();
   if(pick.mode === "hex"){
     var h = nearestHex(w.x, w.y);
-    if(pick.multi){
-      var cur = parseHexes(pick.target.hexes), at = -1;
-      for(var ci = 0; ci < cur.length; ci++){
-        if(cur[ci].col === h.col && cur[ci].row === h.row){ at = ci; break; }
-      }
-      if(at > -1) cur.splice(at, 1); else cur.push({ col: h.col, row: h.row });
-      pick.target.hexes = cur.map(function(x){ return hexKey(x.col, x.row); }).join(", ");
-    } else {
-      pick.target.col = h.col; pick.target.row = h.row;
-    }
+    pick.target.col = h.col; pick.target.row = h.row;
   } else {
     pick.target.px = Math.round((w.x - g.x0) / g.gw * S.map.imgW);
     pick.target.py = Math.round((w.y - g.y0) / g.gh * S.map.imgH);
