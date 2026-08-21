@@ -3,7 +3,7 @@
    Loaded by the hex map, the environment index, and the
    adversary index. Entries carrying col/row also become
    lit hexes on the map.
-   Generated 2026-08-20 by the Cealla Data Forge.
+   Generated 2026-08-21 by the Cealla Data Forge.
    ============================================================ */
 window.CEALLA_DATA = {
 
@@ -70,7 +70,7 @@ window.CEALLA_DATA = {
       motives: "Tear Down Walls, Crush the Living, Kill the Witch",
       difficulty: 12, thresholds: "8/15", hp: 10, stress: 4, atk: "+3",
       attack: { name: "Slam", range: "Very Close", damage: "1d10+2" },
-      hexes: "14.15, 15.15, 15.16",
+      location: "Created by necromantic magic and given limited sentience; it follows simple commands but innately desires to grow as large as possible.",
       features: [
         { name: "Undying Assault", type: "Passive", text: "The Undead Mass cannot drop below 2 HP until  Magda's Ritual is completed. Upon completion  of the ritual, \nthe creature can lose its last 2 HP  and be defeated." },
         { name: "Consume the Dead", type: "Reaction", text: "The Undead Mass consumes all undead within Close range of itself, using a Stress to do so.  For every \nHorde of Sunken Skeletons or undead absorbed, the Undead Mass increases its size,  which is represented by the recovery of 2 HP  and gaining +1 Difficulty. This ability can be  performed multiple times." },
@@ -84,7 +84,7 @@ window.CEALLA_DATA = {
       motives: "Be Consumed, Overwhelm Enemies, Kill the Witch",
       difficulty: 10, thresholds: "6/12", hp: 6, stress: 2, atk: "+1",
       attack: { name: "Rend", range: "Melee", damage: "1d6+2 phy" },
-      hexes: "14.15, 15.15, 15.16",
+      location: "Created by necromantic magic, or in areas where malevolent energy is allowed to fester in or around a body of water.",
       features: [
         { name: "Group Attack", type: "Action", text: "Choose a target that is currently Restrained and  spotlight all other Sunken Skeletons in Close  range, having them move either into melee  range with the target, or moving into melee with  the Undead Mass." },
         { name: "Clawing Grasp", type: "Reaction", text: "When the Sunken Skeleton succeeds on an  attack, they can spend a Stress to temporarily  Restrain the target, forcing them to take a Stress." }
@@ -97,7 +97,7 @@ window.CEALLA_DATA = {
       difficulty: 14, thresholds: "8/15", hp: 5, stress: 4, atk: "+3",
       attack: { name: "Serrated Dirk", range: "Melee", damage: "2d8+2" },
       experience: "Hide in Plain Sight +2",
-      hexes: "15.16",
+      location: "Cealla-wide. The headquarters of the Tsurada is currently unknown. ",
       features: [
         { name: "Neutralize the Target", type: "Passive", text: "When the Tsurada Assassin is hidden, they deal direct damage to the target. If the target is an NPC, they deal damage equal to the NPC's total health, killing them instantly. " },
         { name: "False Persona", type: "Passive", text: "A PC who rolls less than a 17 on an action roll to discover the Assassin's true identity must mark a Stress. " },
@@ -110,7 +110,7 @@ window.CEALLA_DATA = {
       motives: "Hunt Prey, Hit & Run, Always Moving",
       difficulty: 14, thresholds: "8/16", hp: 5, stress: 4, atk: "+2",
       attack: { name: "Teeth & Talons", range: "Very Close", damage: "2d6+2" },
-      hexes: "18.14, 17.14, 17.13, 12.04, 11.04, 10.05, 11.05, 12.05, 12.06, 11.06, 10.06, 09.06, 09.05, 21.11, 22.10, 23.10, 23.09, 24.09, 25.09, 25.10, 24.10, 24.11, 23.11, 22.11, 25.11, 30.14, 29.15, 29.14, 28.15, 29.16, 30.16, 29.17, 29.18, 30.18, 28.18, 28.17, 27.17, 28.16, 30.15, 31.14, 31.15, 31.16, 32.16, 33.16, 34.16, 33.15, 32.15, 34.15, 34.17, 29.19, 28.19, 27.18, 37.20, 38.20, 38.21, 39.20, 40.20, 43.26, 42.25, 43.24, 42.23, 42.22, 41.22, 40.21, 39.21, 40.22, 40.23, 41.24, 41.23, 42.24, 41.25, 42.26, 37.21, 39.22, 38.22, 39.23, 38.25, 38.24, 39.24, 39.25, 40.24, 40.25, 41.26, 40.26, 39.27, 40.27, 41.27, 42.27, 15.22, 14.21, 13.20, 13.19, 14.20, 13.21, 12.21, 12.20, 12.19",
+      location: "Found throughout Cealla, typically inhabiting mountainous regions or oceanic cliffsides.",
       features: [
         { name: "Master of the Sky", type: "Passive", text: "While the Tiyruuk is airborne, its Difficulty is increased by +2. " },
         { name: "Peregrine Dive", type: "Action", text: "<b>Spend a Fear</b> to have the Tiyruuk attack a target within Far range. If successful, the Tiyruuk deals 2d10+2 physical damage and forces the target to to make an Agility Reaction Roll or become <i>Restrained</i>. If the target fails the reaction roll, the Tiyruuk immediately sinks its talons into the target and takes back off to Far range once more. " },
