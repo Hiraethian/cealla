@@ -3,7 +3,7 @@
    Loaded by the hex map, the environment index, and the
    adversary index. Entries carrying col/row also become
    lit hexes on the map.
-   Generated 2026-08-21 by the Cealla Data Forge.
+   Generated 2026-09-19 by the Cealla Data Forge.
    ============================================================ */
 window.CEALLA_DATA = {
 
@@ -60,6 +60,16 @@ window.CEALLA_DATA = {
         { name: "The Dead Bard", type: "Action", text: "Just as the party arrives outside the tavern, a scream is heard from the tavern owner's wife. The bard Nayvus, a regular of the establishment, was found dead in his room. The tavern owner has detained everyone who was staying at the tavern, and implores the party to help them uncover the killer. " },
         { name: "Meet the Cast", type: "Passive", text: "Roadside taverns and inns are well-known for attracting a unique cast of visitors, and PCs will find that tonight is no different. One of the following individuals killed Nayvus, though all may have their reasons...\n<br>\n<br>\n<b>The Traveling Merchant</b> - Arrived earlier that day, but has had bad blood with Nayvus since the last time they were together at this tavern, a brawl between them ensued.\n<br>\n<br> \n<b>The Local Farmer</b> - They arrived just before Nayvus did, and it is rumored they once had a more intimate relationship with the bard before things soured unexpectedly.\n<br>\n<br> \n<b>The Rival Performer</b> - They got to the Saluting Sardelle half a day after Nayvus, and seemed quite irate that they would be unable to fund their travel since Nayvus was already booked for the next few days.\n<br>\n<br> \n<b>The Quiet Mercenary</b> - A person of few words, they claim to have been hired to protect Nayvus once before, but when it was time to pay up he fled in the night. \n<br>\n<br> \n<b>The Tavern Owner</b> - A frequent host for Nayvus who initiated this investigation, the others believe they killed him over a long overdue tab, and they are trying to pin it on one of the travelers. \n<br>\n<br> \n<b>The Tavern Owner's Wife</b> - The one who found Nayvus dead, the Local Farmer believe Nayvus left them to pursue the Tavern Owner's Wife who feared their affair being discovered. " },
         { name: "Countdown to Discovery", type: "Reaction", text: "As PCs begin their investigation, they will need to perform <b>Action Rolls (17)</b> to figure out who the killer actually is. In reality, it is a Tsurada Assassin posing as one of the six individuals above that killed Nayvus but is trying to make it seem to have not been a hired killing. Before the investigation begins, roll a 1d6 (or choose) to determine which NPC above has actually been replaced by the Tsurada Assassin. \n<br>\n<br> \nNext, set an <b>Escape Countdown (4)</b> which increases by one everytime PCs fail an Action Roll (or by two on a critical failure) to search for clues about who committed the murder. After two failures, infighting amongst the  people within the tavern will begin. At four failures, roll 2d6 (or choose) to select two of  the NPCs above to get into an altercation where one of them is killed in the fight. In this confusion, the actual killer will escape and become untraceable by the PCs. \n<br>\n<br> \nShould the PCs be able to succeed on four Action Rolls before failing the Escape Countdown, they will discover proof that the killer is actually a paid assassin posing as one of the NPCs above. They can then either attempt to kill or subdue the assassin, and prove the innocence of all the others present. " }
+      ] },
+
+    { name: "Flame & Glass", slug: "flame-glass",
+      kind: "city", tier: 1, envType: "Event",
+      flavor: "The source of Emberheart’s ailment has been outed, and now there is \nnothing left to do but burn it all down...",
+      impulses: "Burn It Down, Keep Them Guessing",
+      difficulty: 13, adversaries: "Molten Glass Elemental, Molten Tendrils",
+      features: [
+        { name: "Hot-Headed Ally", type: "Passive", text: "Though Emberheart is in a weakened \nstate, she can still prove to be a potent ally if properly empowered. PCs may Mark a Stress in order to stoke the Sacred Kiln and increase her Heat Clock by 1. When her Heat Clock is 4 or higher, she can reduce her heat by no more than 3, and can raise the Molten Glass Elemental’s Heat Clock by an equal amount. She begins the encounter at Heat Clock (3) with a maximum of 6, but if Emberheart’s clock falls to 0, her life flame is snuffed out and she passes on. However, if the party doesn’t stoke her flames while they have the spotlight, her Heat Clock will decrease by 1 instead. " },
+        { text: "The workshop has mechanisms for fire safety and mitigation in the forms of sand bags and water hoses which can be used by the party to quell the Molten Glass Elemental’s rage.\n\n- PCs can leverage the sand bag cranes to reduce the Molten Glass Elemental’s Heat Clock by 1. PCs will need to make a Finesse Action Roll (13) in order to hit a creature with a sand bag. However, should the PCs Succeed With Fear,  a Molten Tendril is spawned within close range of the Molten Glass Elemental.\n\n- PCs can leverage the water hoses to reduce the Heat Clock of the Molten Glass Elemental by 2. PCs will need to make a Strength Action Roll (13) in order to spray the elemental with the water hose. However, should the PCs Succeed With Fear, the elemental will explode in a shroud of hot steam dealing 1d10+2 Magic Damage to everyone within very close range." }
       ] }
   ],
 
@@ -115,6 +125,30 @@ window.CEALLA_DATA = {
         { name: "Master of the Sky", type: "Passive", text: "While the Tiyruuk is airborne, its Difficulty is increased by +2. " },
         { name: "Peregrine Dive", type: "Action", text: "<b>Spend a Fear</b> to have the Tiyruuk attack a target within Far range. If successful, the Tiyruuk deals 2d10+2 physical damage and forces the target to to make an Agility Reaction Roll or become <i>Restrained</i>. If the target fails the reaction roll, the Tiyruuk immediately sinks its talons into the target and takes back off to Far range once more. " },
         { name: "Smash On the Rocks", type: "Action", text: "While airborne, the Tiyruuk can release a Restrained target to be smashed upon the rocks or the ground from the fall. If their falling isn't halted before their next action, the target takes 2d12+4 physical damage." }
-      ] }
+      ] },
+
+    { name: "Molten Glass Elemental", slug: "molten-glass-elemental",
+      tier: 1, advType: "Solo",
+      flavor: "A parasitic spirit that feeds on elemental magic, siphoning their life force to sustain their unending hunger...",
+      motives: "Feed on Host, Melt Your Foes, Burn Them All",
+      difficulty: 14, thresholds: "8/16", hp: 8, stress: 3, atk: "+2",
+      attack: { name: "Melt", range: "Very Close", damage: "1d10+3 phy" },
+      location: "Near nexal fonts, or amongst various mage colleges as protectors for highly skilled arcane users.",
+      features: [
+        { name: "Molten Form", type: "Passive", text: "With a Heat Clock (4) or more, the elemental’s Thresholds are reduced by 1 for each stage above Heat Clock (3) to a maximum reduction of 6/14 at Heat Clock (5). In addition, if the elemental is at Heat Clock (5) its Difficulty is also lowered to 13." },
+        { name: "Tempered Form", type: "Passive", text: "With a Heat Clock (2) or less, the elemental’s Thresholds are increased by 1 for each stage below Heat Clock (3) to a maximum  of 11/19 at Heat Clock (0). In addition, if the elemental is at Heat Clock (0) its Difficulty is also increased to 15." },
+        { name: "Rain of Shards", type: "Action", text: "With a Heat Clock (3) or more, deal 1d6+3 magic damage to all creatures in Very Close range. If the Molten Glass Elemental is at Heat Clock (5) it instead deals 1d10+4 magic damage to all creatures within Far range and lowers his heat by 1." },
+        { name: "Form Swap", type: "Action", text: "After you Spend a Fear you can move the Heat Clock of the Molten Glass Elemental to either 0 or 5, and regain a Stress token. Use of this feature also allows you to activate any Reaction for which the prerequisites are met." },
+        { name: "Annealiation", type: "Reaction", text: "If the Heat Clock of the Molten Glass Elemental would be moved from Heat Clock (4) or more to (2) or less in a round you can spend a Stress to give the Ignited condition to all targets within Melee range." },
+        { name: "Pyrolytic Rage", type: "Reaction", text: "If the Heat Clock of the Molten Glass Elemental would be moved from Heat Clock (2) or less to (4) or more in a round you can spend a Stress to make  all targets within Melee range Vulnerable until the next time they are attacked." }
+      ] },
+
+    { name: "Molten Tendril", slug: "molten-tendril",
+      tier: 1, advType: "Minion",
+      flavor: "Pseudo-sentient pieces of the Molten Elemental that have been detached but still follow its will and directions...",
+      motives: "Restrain Foes, Fight til Death",
+      difficulty: 11, thresholds: "6/10", hp: 1, stress: 1, atk: "+1",
+      attack: { name: "Lash", range: "Close", damage: "1d6+3 phy" },
+      location: "A piece (or byproduct) of the Molten Glass Elemental. Since it is something of an abomination, it has only ever been observed in Ardenfell. " }
   ]
 };
