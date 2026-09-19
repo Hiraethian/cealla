@@ -4,7 +4,7 @@
    Owned by the City Forge. The main Data Forge never touches
    this file, and this tool never touches cealla-data.js.
    If a page loads both files, load cealla-data.js FIRST.
-   Generated 2026-08-13 by the Cealla City Forge.
+   Generated 2026-09-19 by the Cealla City Forge.
    ============================================================ */
 window.CEALLA_DATA = window.CEALLA_DATA || {};
 window.CEALLA_DATA.cities = [
@@ -44,6 +44,31 @@ window.CEALLA_DATA.cities = [
 
         { name: "The Floating Gardens", slug: "the-floating-gardens",
           district: "arden-floating-market", locType: "Landmark",
-          x: 1194, y: 1465 }
+          x: 1194, y: 1465 },
+
+        { name: "Artisan's cathedral", slug: "artisan-s-cathedral",
+          district: "glasswork-hollow", locType: "Landmark",
+          x: 841, y: 1469,
+          flavor: "A shared guild hall for the city's largest guilds and most skilled artisans. It represents Ardenfell's dedication to artistry with its imposing size and design, and is one of the most well known architectural features in the city by those who visit or have studied the city." },
+
+        { name: "The Glassworks", slug: "the-glassworks",
+          district: "glasswork-hollow", locType: "Workshop",
+          x: 967, y: 1400,
+          flavor: "A chaotic sprawl of workshops and boutique crafting halls, the Glassworks is where every one of the city's greatest crafters got their start in one way or another. No one leaves the Glassworks without getting some sand underneath \ntheir fingernails." },
+
+        { name: "The Stained Market", slug: "the-stained-market",
+          district: "glasswork-hollow", locType: "Market",
+          x: 900, y: 1523,
+          flavor: "The seamless transition space that connects the Floating Market to the Glasswork Hollow. It's here that vendors proudly display the works of their friend or client-crafters, their voices melding into a cacophony of intense bartering and unbeatable deals." },
+
+        { name: "Glisten Street", slug: "glisten-street",
+          district: "glasswork-hollow", locType: "Street",
+          x: 1139, y: 1383,
+          flavor: "Where the neighborhood's artisans and locals come to unwind, or try their hand at other kinds of artistry. It trades taverns for cafes and unique eateries, and is a favorite place for performers and cooks who are dedicated to their craft to share \ntheir artistic stylings." },
+
+        { name: "The Hollow's Inn", slug: "the-hollow-s-inn",
+          district: "glasswork-hollow", locType: "Tavern",
+          x: 883, y: 1386,
+          flavor: "A surprisingly sleepy tavern that is lodged between Greyhook and the Hollow. It was once something of a favored tavern in the neighborhood, though it has recently fallen on hard times after being acquired by a former adventurer." }
       ] }
 ];
