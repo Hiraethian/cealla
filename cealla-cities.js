@@ -12,8 +12,8 @@ window.CEALLA_DATA.cities = [
       image: "https://images.squarespace-cdn.com/content/v1/673f340165a71b0fc817fb27/b8b81c6e-b5d6-45ef-872a-74a8c8ff108e/Page+4.png?format=2500w",
       w: 2500, h: 3233,
       districts: [
-        { name: "Arden Floating Market", slug: "arden-floating-market", link: "/ardenfell-store/p/arden-floating-market-setting-guide" },
-        { name: "Glasswork Hollow", slug: "glasswork-hollow" },
+        { name: "Arden Floating Market", slug: "arden-floating-market", link: "/store/p/arden-floating-market-environments-encounters" },
+        { name: "Glasswork Hollow", slug: "glasswork-hollow", link: "/store/p/glasswork-hollow-environments-encounters" },
         { name: "Harborfront", slug: "harborfront" },
         { name: "Scholar's Enclave", slug: "scholars-enclave" },
         { name: "Greyhook", slug: "greyhook" },
