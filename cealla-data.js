@@ -3,7 +3,7 @@
    Loaded by the hex map, the environment index, and the
    adversary index. Entries carrying col/row also become
    lit hexes on the map.
-   Generated 2026-09-19 by the Cealla Data Forge.
+   Generated 2026-09-21 by the Cealla Data Forge.
    ============================================================ */
 window.CEALLA_DATA = {
 
@@ -70,6 +70,18 @@ window.CEALLA_DATA = {
       features: [
         { name: "Hot-Headed Ally", type: "Passive", text: "Though Emberheart is in a weakened \nstate, she can still prove to be a potent ally if properly empowered. PCs may Mark a Stress in order to stoke the Sacred Kiln and increase her Heat Clock by 1. When her Heat Clock is 4 or higher, she can reduce her heat by no more than 3, and can raise the Molten Glass Elemental’s Heat Clock by an equal amount. She begins the encounter at Heat Clock (3) with a maximum of 6, but if Emberheart’s clock falls to 0, her life flame is snuffed out and she passes on. However, if the party doesn’t stoke her flames while they have the spotlight, her Heat Clock will decrease by 1 instead. " },
         { name: "We Didn't Start the Fire", type: "Action", text: "The workshop has mechanisms for fire safety and mitigation in the forms of sand bags and water hoses which can be used by the party to quell the Molten Glass Elemental’s rage.\n\n- PCs can leverage the sand bag cranes to reduce the Molten Glass Elemental’s Heat Clock by 1. PCs will need to make a Finesse Action Roll (13) in order to hit a creature with a sand bag. However, should the PCs Succeed With Fear,  a Molten Tendril is spawned within close range of the Molten Glass Elemental.\n\n- PCs can leverage the water hoses to reduce the Heat Clock of the Molten Glass Elemental by 2. PCs will need to make a Strength Action Roll (13) in order to spray the elemental with the water hose. However, should the PCs Succeed With Fear, the elemental will explode in a shroud of hot steam dealing 1d10+2 Magic Damage to everyone within very close range." }
+      ] },
+
+    { name: "A Man Named Ol' Jim", slug: "a-man-named-ol-jim",
+      kind: "wild", tier: 2, envType: "Exploration",
+      col: 16, row: 16,
+      flavor: "A dangerous pass requires crossing a rickety bridge... And dealing with its maintainer. ",
+      impulses: "Drop the Carelss, Slow Adventurers, Fall Apart",
+      difficulty: 14, adversaries: "Tiyruuks, Dire Wolves",
+      features: [
+        { name: "A(nother) Bridge too Far", type: "Passive", text: "Crossing the bridge will utilize a Bridge Crossing (6) clock which will require each PC to make at least one of the checks. This is best executed by having those only making a single check go first, and having the last 1-2 PCs serve as the \"anchor\" for the remaining ones. If your party size is larger than 6, increase the clock to the minimum party size. \n<br>\n<br>\n\nEach failure however will count up on the Bridge Collapse (3) clock. When three failures are reached, the bridge will collapse, causing whoever is currently crossing to fall, taking 3d12 physical damage. Additionally, this will make the bridge unusable, and will force the PCs to lose a 1d2 day's worth of travel in order to regroup.\n" },
+        { name: "The Rickety Bridge", type: "Action", text: "<b>Spend a Fear</b> to have a PC’s step on a waterlogged wooden plank, causing them to stumble and fall through the gap. Activation of this feature does not count against the Bridge Collapse (3) clock, nor does the PC's <b>Reaction Roll</b> to avoid falling completely down the gap. Should the PC(s) succeed on their <b>Reaction Roll</b>, they will be able to grab on and hoist themselves back up before continuing across the bridge. If they fail, they will fall approximately 40 feet, and take <b>3d12 physical damage</b>." },
+        { name: "Ol' Jim Is (And Was) My Name", type: "Passive", text: "Introduce the friendly whittler NPC, Ol' Jim as your PCs arrive at the old bridge crossing. He is rather excited to see new people, and claims to live the beaten down shack that is across from the crossing. He is incredibly chatty, slightly invasive, but most of all has a lot of opinions on the best way to cross the bridge that the PCs are about to deal with.\n<br>\n<br>\n\nOl' Jim, while a bit much, is incredibly useful at helping other navigate the bridge, and should PCs heed his advice, they will get <b>Advantage</b> on each check that they make, though he will take a bit of time getting to the point of actually DELIVERING the advice... Alternatively, if PCs actively ignore his advice, they will make their rolls with Disadvantage instead, and should they fail he will say something along the line of *\"I tried to warn you, but no... No one wants to listen to Ol' Jim.\"*\n<br>\n<br>\n\nShould PCs return another time, or ask others on the road about Ol' Jim, they will hear tale of an old man who once traveled these paths and died on that bridge. Since they, people have told stories about the ghost of Ol' Jim, but most attribute it to overactive imaginations. " }
       ] }
   ],
 
